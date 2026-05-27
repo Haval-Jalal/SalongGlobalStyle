@@ -1,1535 +1,439 @@
 <!DOCTYPE html>
 <html lang="sv">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salong Global Style | Premium Barberare i Göteborg</title>
-    <meta name="description" content="Salong Global Style — Göteborg's premiumval för herrfrisering, precision fades och skäggvård. Wieselgrensgatan 7, Göteborg.">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        html {
-            overflow-x: hidden;
-            max-width: 100%;
-        }
-
-        :root {
-            --gold:        #D4AF37;
-            --gold-light:  #F0D070;
-            --gold-dark:   #A8882A;
-            --dark:        #111111;
-            --darker:      #080808;
-            --card:        #141414;
-            --border:      rgba(212,175,55,.14);
-            --fg:          #F5F0E8;
-            --muted:       #888;
-            --sp:          8rem;
-        }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--darker);
-            color: var(--fg);
-            line-height: 1.6;
-            overflow-x: hidden;
-            max-width: 100vw;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        /* ── LOADER ───────────────────────────────── */
-        #loader {
-            position: fixed; inset: 0;
-            background: var(--darker);
-            z-index: 99999;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center; gap: 1.5rem;
-            transition: opacity .7s ease, visibility .7s ease;
-        }
-        #loader.gone { opacity: 0; visibility: hidden; pointer-events: none; }
-
-        .loader-icon {
-            font-size: 2.8rem; color: var(--gold);
-            animation: scOpen 1.4s ease-in-out infinite;
-        }
-        .loader-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem; letter-spacing: 4px; color: var(--gold);
-            opacity: 0; animation: fadeUp .7s ease .4s forwards;
-        }
-        .loader-track {
-            width: 180px; height: 2px;
-            background: rgba(212,175,55,.2); border-radius: 1px; overflow: hidden;
-        }
-        .loader-fill {
-            height: 100%; background: var(--gold);
-            animation: fillBar 1.6s ease forwards;
-        }
-        @keyframes scOpen { 0%,100%{transform:rotate(-15deg) scale(1)} 50%{transform:rotate(15deg) scale(1.1)} }
-        @keyframes fillBar { from{width:0} to{width:100%} }
-        @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
-
-        /* ── CURSOR (only on true pointer/mouse devices) ── */
-        .c-dot, .c-ring { display: none; }
-
-        @media(hover: hover) and (pointer: fine) {
-            body { cursor: none; }
-            .c-dot, .c-ring {
-                display: block;
-                position: fixed; border-radius: 50%;
-                pointer-events: none; z-index: 99998;
-                transform: translate(-50%,-50%);
-            }
-            .c-dot  { width:6px; height:6px; background:var(--gold); }
-            .c-ring {
-                width:38px; height:38px;
-                border: 1.5px solid rgba(212,175,55,.55);
-                transition: width .3s, height .3s, border-color .3s;
-            }
-            .c-ring.big { width:62px; height:62px; border-color: var(--gold); }
-        }
-
-        /* ── PROGRESS BAR ─────────────────────────── */
-        #prog {
-            position: fixed; top:0; left:0; height:2px; width:0%;
-            background: linear-gradient(90deg, var(--gold-dark), var(--gold), var(--gold-light));
-            z-index: 99997; transition: width .1s linear;
-        }
-
-        /* ── FLOAT BUTTON ─────────────────────────── */
-        .float-btn {
-            position: fixed; bottom:2rem; right:2rem; z-index: 9990;
-            background: var(--gold); color: var(--darker);
-            padding: .9rem 1.6rem; border-radius: 50px;
-            font-weight: 700; font-size: .85rem;
-            letter-spacing: 1px; text-transform: uppercase;
-            text-decoration: none;
-            display: flex; align-items: center; gap: .5rem;
-            box-shadow: 0 8px 30px rgba(212,175,55,.45);
-            transform: translateY(100px); opacity: 0;
-            transition: transform .45s cubic-bezier(.16,1,.3,1),
-                        opacity .45s, box-shadow .3s;
-        }
-        .float-btn.on { transform: none; opacity: 1; }
-        .float-btn:hover { box-shadow: 0 14px 40px rgba(212,175,55,.65); transform: translateY(-3px); }
-
-        /* ── MOBILE OVERLAY ───────────────────────── */
-        #mobileNav {
-            display: none; position: fixed; inset: 0;
-            background: rgba(8,8,8,.97);
-            z-index: 8990;
-            flex-direction: column; align-items: center; justify-content: center; gap: 2.5rem;
-        }
-        #mobileNav.open { display: flex; }
-        #mobileNav a {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2rem,7vw,3rem);
-            color: var(--fg); text-decoration: none;
-            transition: color .3s;
-        }
-        #mobileNav a:hover { color: var(--gold); }
-
-        /* ── NAV ──────────────────────────────────── */
-        nav {
-            position: fixed; top:0; width:100%; z-index: 9000;
-            padding: 1.6rem 0;
-            transition: padding .4s, background .4s, border-color .4s;
-            border-bottom: 1px solid transparent;
-        }
-        nav.solid {
-            background: rgba(8,8,8,.96); backdrop-filter: blur(18px);
-            padding: 1rem 0; border-color: var(--border);
-        }
-        .nav-in {
-            max-width: 1300px; margin: 0 auto; padding: 0 2.5rem;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .logo { text-decoration: none; }
-        .logo-top {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.55rem; font-weight: 700;
-            color: var(--gold); letter-spacing: 2px; display: block; line-height: 1;
-        }
-        .logo-bot {
-            font-size: .62rem; letter-spacing: 4px; text-transform: uppercase;
-            color: var(--muted); display: block; margin-top: 3px;
-        }
-        .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-        .nav-links a {
-            color: var(--fg); text-decoration: none;
-            font-size: .85rem; letter-spacing: 1px; text-transform: uppercase;
-            transition: color .3s; position: relative;
-        }
-        .nav-links a::after {
-            content:''; position:absolute; bottom:-4px; left:0;
-            width:0; height:1px; background:var(--gold); transition: width .3s;
-        }
-        .nav-links a:hover { color: var(--gold); }
-        .nav-links a:hover::after { width:100%; }
-        .nav-cta {
-            border: 1px solid var(--gold); color: var(--gold);
-            padding: .55rem 1.4rem; border-radius: 4px;
-            text-decoration: none; font-size: .82rem;
-            letter-spacing: 1px; text-transform: uppercase;
-            transition: all .3s;
-        }
-        .nav-cta:hover { background: var(--gold); color: var(--darker); }
-        .burger {
-            display: none; flex-direction: column; gap: 5px;
-            cursor: pointer; padding: 10px;
-            margin: -10px;
-        }
-        .burger span {
-            display: block; width: 25px; height: 2px;
-            background: var(--gold); transition: all .3s; transform-origin: center;
-        }
-        .burger.x span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-        .burger.x span:nth-child(2) { opacity: 0; }
-        .burger.x span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-        /* ── HERO ─────────────────────────────────── */
-        .hero {
-            position: relative; min-height: 100svh; min-height: 100vh;
-            display: flex; align-items: center; overflow: hidden;
-        }
-        .hero-bg {
-            position: absolute; inset: 0;
-            background: url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1800&h=1000&fit=crop') center/cover;
-            opacity: .12; filter: grayscale(100%);
-        }
-        .hero-grad {
-            position: absolute; inset: 0;
-            background: linear-gradient(to right, var(--darker) 0%, rgba(8,8,8,.7) 55%, rgba(8,8,8,.3) 100%);
-        }
-        .hero-big { display: none; }
-        .hero-in {
-            position: relative; z-index: 1;
-            max-width: 1300px; margin: 0 auto;
-            padding: 0 2.5rem; width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5rem;
-            align-items: center;
-            overflow: clip;
-        }
-
-        /* ── HERO VISUAL (right side) ─────────────── */
-        .hero-visual {
-            position: relative;
-            height: 540px;
-            opacity: 0;
-            animation: slideR .9s ease 1.6s forwards;
-        }
-
-        /* Offset gold border frame sitting behind the image */
-        .hero-frame {
-            position: absolute;
-            top: 18px; right: -18px; bottom: -18px; left: 18px;
-            border: 1px solid rgba(212,175,55,.3);
-            border-radius: 4px;
-            z-index: 0;
-            transition: border-color .5s;
-        }
-        .hero-visual:hover .hero-frame { border-color: rgba(212,175,55,.6); }
-
-        /* Corner bracket accents */
-        .hcorner {
-            position: absolute; width: 24px; height: 24px; z-index: 4;
-        }
-        .hcorner-tl { top: -10px; left: -10px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
-        .hcorner-tr { top: -10px; right: -10px; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
-        .hcorner-bl { bottom: -10px; left: -10px; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); }
-        .hcorner-br { bottom: -10px; right: -10px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
-
-        /* Image wrapper */
-        .hero-img-wrap {
-            position: absolute; inset: 0;
-            border-radius: 4px; overflow: hidden; z-index: 1;
-        }
-        .hero-img-wrap img {
-            width: 100%; height: 100%; object-fit: cover;
-            display: block;
-            filter: grayscale(20%);
-            transition: filter .7s ease, transform .7s ease;
-        }
-        .hero-visual:hover .hero-img-wrap img {
-            filter: grayscale(0%);
-            transform: scale(1.04);
-        }
-
-        /* Gradient over image — blends left edge into hero bg */
-        .hero-img-wrap::after {
-            content: '';
-            position: absolute; inset: 0;
-            background:
-                linear-gradient(to right, rgba(8,8,8,.6) 0%, transparent 40%),
-                linear-gradient(to top,   rgba(8,8,8,.55) 0%, transparent 45%);
-            pointer-events: none;
-        }
-
-        /* Floating rating card */
-        .hero-rate {
-            position: absolute;
-            bottom: 2.5rem; left: -2.2rem;
-            background: var(--gold); color: var(--darker);
-            padding: 1.2rem 1.6rem; border-radius: 8px;
-            z-index: 5;
-            box-shadow: 0 12px 36px rgba(212,175,55,.5);
-            animation: floatY 5s ease infinite;
-            cursor: default;
-            min-width: 130px;
-        }
-        .rate-num  { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; line-height:1; display:block; }
-        .rate-stars { font-size:.75rem; letter-spacing:1.5px; display:block; margin:.25rem 0; }
-        .rate-sub   { font-size:.7rem; opacity:.75; white-space:nowrap; display:block; }
-
-        /* Floating open/closed badge */
-        .hero-status-badge {
-            position: absolute;
-            top: 2rem; right: -1.8rem;
-            background: rgba(8,8,8,.88);
-            border: 1px solid rgba(212,175,55,.35);
-            backdrop-filter: blur(14px);
-            padding: .8rem 1.2rem; border-radius: 8px;
-            z-index: 5;
-            display: flex; align-items: center; gap: .6rem;
-            animation: floatY 5s ease 2s infinite;
-        }
-        .hero-status-badge .status-dot { width:8px; height:8px; border-radius:50%; background:#4caf50; animation:blink 2s ease infinite; }
-        .hero-status-badge .status-txt { font-size:.82rem; font-weight:500; white-space:nowrap; }
-
-        /* Decorative scissor watermark inside image */
-        .hero-sc-dec {
-            position: absolute; bottom: 3.5rem; right: 2rem;
-            font-size: 5rem;
-            color: rgba(212,175,55,.14); z-index: 2;
-            transform: rotate(-30deg);
-            pointer-events: none; user-select: none;
-        }
-
-        /* Vertical accent line (left of visual) */
-        .hero-vline {
-            position: absolute; left: -2.5rem; top: 15%; height: 70%;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, rgba(212,175,55,.5), transparent);
-        }
-
-        @keyframes slideR { from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:none} }
-        @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-
-        /* ── MOBILE-ONLY HERO META ─────────────────── */
-        .hero-mob-meta {
-            display: none;
-            align-items: center; gap: .6rem; flex-wrap: wrap;
-            justify-content: center; margin-bottom: 2rem;
-        }
-        .hero-mob-pill {
-            display: inline-flex; align-items: center; gap: .45rem;
-            padding: .4rem 1rem; border-radius: 50px;
-            font-size: .78rem; white-space: nowrap;
-        }
-        .hero-mob-pill.gold {
-            background: rgba(212,175,55,.12);
-            border: 1px solid rgba(212,175,55,.35);
-            color: var(--gold);
-        }
-        .hero-mob-pill.dark {
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.12);
-            color: var(--fg);
-        }
-        .mob-dot { width: 7px; height: 7px; border-radius: 50%; background: #4caf50; animation: blink 2s ease infinite; }
-        .eyebrow {
-            display: flex; align-items: center; gap: 1rem; margin-bottom: 1.4rem;
-            opacity: 0; animation: slideL .8s ease 1.3s forwards;
-        }
-        .eyebrow-line { display: block; width: 35px; height: 1px; background: var(--gold); }
-        .eyebrow span { font-size: .75rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(2.8rem, 6vw, 6rem);
-            font-weight: 600; line-height: 1; margin-bottom: 1.4rem;
-            opacity: 0; animation: slideL .8s ease 1.5s forwards;
-        }
-        .h-white { color: var(--fg); display: block; }
-        .h-gold  { color: var(--gold); display: block; font-style: italic; }
-        .hero-sub {
-            font-size: 1.05rem; color: var(--muted); max-width: 430px;
-            font-weight: 300; line-height: 1.85; margin-bottom: 2.5rem;
-            opacity: 0; animation: slideL .8s ease 1.7s forwards;
-        }
-        .hero-btns {
-            display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
-            opacity: 0; animation: slideL .8s ease 1.9s forwards;
-        }
-        .btn-gold {
-            display: inline-block; background: var(--gold); color: var(--darker);
-            padding: 1rem 2.6rem; border-radius: 4px;
-            font-weight: 700; font-size: .82rem;
-            letter-spacing: 2px; text-transform: uppercase;
-            text-decoration: none; transition: all .3s;
-        }
-        .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 14px 40px rgba(212,175,55,.4); }
-        .btn-ghost {
-            display: inline-flex; align-items: center; gap: .8rem;
-            color: var(--fg); text-decoration: none;
-            font-size: .9rem; transition: all .3s;
-        }
-        .btn-ghost:hover { color: var(--gold); gap: 1.1rem; }
-        .ghost-circle {
-            width: 46px; height: 46px; border-radius: 50%;
-            border: 1px solid rgba(255,255,255,.25);
-            display: flex; align-items: center; justify-content: center;
-            transition: all .3s;
-        }
-        .btn-ghost:hover .ghost-circle { border-color: var(--gold); background: var(--gold); color: var(--darker); }
-        .hero-foot {
-            position: absolute; bottom: 2.5rem; left: 0; right: 0;
-            max-width: 1300px; margin: 0 auto; padding: 0 2.5rem;
-            display: flex; justify-content: space-between; align-items: flex-end;
-            opacity: 0; animation: fadeUp .8s ease 2.3s forwards;
-        }
-        .hero-loc { display: flex; align-items: center; gap: .7rem; color: var(--muted); font-size: .85rem; }
-        .hero-loc i { color: var(--gold); }
-        .scroll-cue { display: flex; flex-direction: column; align-items: center; gap: .5rem; color: var(--muted); font-size: .72rem; letter-spacing: 2px; text-transform: uppercase; }
-        .scroll-line { width: 1px; height: 48px; background: linear-gradient(var(--gold), transparent); animation: pulse 2s ease infinite; }
-        @keyframes slideL { from{opacity:0;transform:translateX(-28px)} to{opacity:1;transform:none} }
-        @keyframes pulse  { 0%,100%{opacity:1} 50%{opacity:.4} }
-
-        /* ── STATS ────────────────────────────────── */
-        .stats {
-            background: var(--card);
-            border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-            padding: 3rem 2.5rem;
-        }
-        .stats-grid {
-            max-width: 1300px; margin: 0 auto;
-            display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem;
-        }
-        .stat {
-            text-align: center; padding: 1.5rem; position: relative;
-        }
-        .stat:not(:last-child)::after {
-            content:''; position:absolute; right:0; top:20%; height:60%; width:1px; background: var(--border);
-        }
-        .stat-n {
-            font-family: 'Inter', sans-serif;
-            font-size: 2.8rem; font-weight: 600; color: var(--gold); line-height: 1; margin-bottom: .4rem;
-        }
-        .stat-s { color: var(--gold-light); }
-        .stat-l { font-size: .75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-
-        /* ── SHARED LAYOUT HELPERS ─────────────────── */
-        .wrap { max-width: 1300px; margin: 0 auto; }
-        .sec-eye {
-            display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem;
-        }
-        .sec-eye-line { display: block; width: 30px; height: 1px; background: var(--gold); }
-        .sec-eye span { font-size: .72rem; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); }
-        h2.sec-title {
-            font-family: 'Playfair Display', serif;
-            font-size: clamp(1.8rem,3vw,2.6rem);
-            font-weight: 600; line-height: 1.15; color: var(--fg);
-        }
-        h2.sec-title em { color: var(--gold); font-style: italic; }
-
-        /* ── ABOUT ────────────────────────────────── */
-        .about { padding: var(--sp) 2.5rem; background: var(--darker); position: relative; overflow: hidden; }
-        .about::before { display: none; }
-        .about-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
-        }
-        .about-vis { position: relative; }
-        .about-img {
-            width: 100%; height: 560px; object-fit: cover;
-            border-radius: 4px; display: block;
-            filter: grayscale(25%); transition: filter .5s;
-        }
-        .about-vis:hover .about-img { filter: grayscale(0%); }
-        .about-badge {
-            position: absolute; top: 2rem; left: -2rem;
-            background: var(--gold); color: var(--darker);
-            padding: 1.4rem 1.2rem; text-align: center; border-radius: 4px;
-        }
-        .about-badge-n { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 2.4rem; line-height: 1; display: block; }
-        .about-badge-l { font-size: .6rem; letter-spacing: 2px; text-transform: uppercase; display: block; }
-        .about-accent {
-            position: absolute; bottom: -2rem; right: -2rem;
-            width: 190px; height: 190px; object-fit: cover;
-            border-radius: 4px; border: 4px solid var(--darker);
-            filter: grayscale(25%);
-        }
-        .about-body { color: var(--muted); font-size: 1rem; line-height: 1.9; margin-bottom: 1.6rem; }
-        .about-feats { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-        .feat { display: flex; align-items: flex-start; gap: .7rem; }
-        .feat i { color: var(--gold); margin-top: .18rem; font-size: .9rem; }
-        .feat span { font-size: .9rem; color: var(--muted); }
-
-        /* ── SERVICES ─────────────────────────────── */
-        .services { padding: var(--sp) 2.5rem; background: var(--dark); }
-        .sec-header {
-            display: flex; justify-content: space-between; align-items: flex-end;
-            margin-bottom: 3.5rem;
-        }
-        .service-row {
-            display: grid; grid-template-columns: 56px 1fr auto auto;
-            align-items: center; gap: 2rem;
-            padding: 2rem 1rem; border-bottom: 1px solid var(--border);
-            position: relative; overflow: hidden; transition: padding .3s;
-        }
-        .service-row::before {
-            content:''; position:absolute; inset:0;
-            background: var(--card);
-            transform: scaleX(0); transform-origin: left;
-            transition: transform .4s ease; z-index: 0;
-        }
-        .service-row:hover::before { transform: scaleX(1); }
-        .service-row > * { position: relative; z-index: 1; }
-        .svc-num { font-size:1rem; font-weight:600; color:var(--muted); transition:color .3s; letter-spacing:1px; }
-        .service-row:hover .svc-num { color:var(--gold); }
-        .svc-info h3 { font-family:'Playfair Display',serif; font-size:1.45rem; margin-bottom:.25rem; transition:color .3s; }
-        .service-row:hover .svc-info h3 { color:var(--gold); }
-        .svc-info p { font-size:.88rem; color:var(--muted); }
-        .svc-price { font-family:'Playfair Display',serif; font-size:1.7rem; color:var(--gold); font-weight:700; white-space:nowrap; }
-        .svc-arrow {
-            width:48px; height:48px; border-radius:50%;
-            border:1px solid var(--border);
-            display:flex; align-items:center; justify-content:center;
-            color:var(--gold); font-size:1.1rem;
-            transition: all .3s;
-        }
-        .service-row:hover .svc-arrow { background:var(--gold); color:var(--darker); border-color:var(--gold); transform:rotate(45deg); }
-
-        /* ── GALLERY ──────────────────────────────── */
-        .gallery { padding: var(--sp) 2.5rem; background: var(--darker); }
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: repeat(2, 270px);
-            gap: .9rem; margin-top: 3rem;
-        }
-        .gitem { position:relative; overflow:hidden; border-radius:4px; cursor:pointer; }
-        .gitem:nth-child(1){grid-column:1/6;grid-row:1/3;}
-        .gitem:nth-child(2){grid-column:6/9;grid-row:1/2;}
-        .gitem:nth-child(3){grid-column:9/13;grid-row:1/2;}
-        .gitem:nth-child(4){grid-column:6/10;grid-row:2/3;}
-        .gitem:nth-child(5){grid-column:10/13;grid-row:2/3;}
-        .gitem img {
-            width:100%; height:100%; object-fit:cover;
-            transition: transform .6s cubic-bezier(.16,1,.3,1);
-            filter: grayscale(30%);
-        }
-        .gitem:hover img { transform:scale(1.08); filter:grayscale(0%); }
-        .g-over {
-            position:absolute; inset:0;
-            background:linear-gradient(to top,rgba(8,8,8,.82) 0%,transparent 55%);
-            opacity:0; transition:opacity .35s;
-            display:flex; align-items:flex-end; padding:1.4rem;
-        }
-        .gitem:hover .g-over { opacity:1; }
-        .g-label { font-family:'Playfair Display',serif; font-size:1.15rem; color:var(--fg); }
-
-        /* ── MARQUEE ──────────────────────────────── */
-        .marquee-sec { padding: var(--sp) 0; background: var(--dark); overflow: hidden; }
-        .marquee-head { text-align:center; padding:0 2.5rem; margin-bottom:3.5rem; }
-        .rating-pill {
-            display: inline-flex; align-items:center; gap:.7rem;
-            background:rgba(212,175,55,.07); border:1px solid var(--border);
-            padding:.65rem 1.4rem; border-radius:50px; margin-bottom:1.4rem;
-        }
-        .rating-stars { color:var(--gold); letter-spacing:2px; font-size:.9rem; }
-        .rating-pill span { font-size:.82rem; color:var(--muted); }
-        .marquee-track {
-            display:flex; gap:1.4rem;
-            animation: marq 42s linear infinite;
-            width: max-content;
-        }
-        .marquee-wrap { overflow: hidden; }
-        .marquee-wrap:hover .marquee-track { animation-play-state:paused; }
-        @keyframes marq { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-
-        /* ── BOOKING MODAL ──────────────────────────── */
-        .book-overlay {
-            position:fixed; inset:0; background:rgba(0,0,0,.75); backdrop-filter:blur(6px);
-            z-index:9999; display:flex; align-items:center; justify-content:center;
-            opacity:0; pointer-events:none; transition:opacity .25s;
-        }
-        .book-overlay.show { opacity:1; pointer-events:all; }
-        .book-modal {
-            background:var(--card); border:1px solid var(--border);
-            border-radius:12px; padding:2.5rem 2rem; max-width:380px; width:90%;
-            text-align:center; transform:translateY(20px); transition:transform .25s;
-        }
-        .book-overlay.show .book-modal { transform:translateY(0); }
-        .book-modal-icon {
-            width:56px; height:56px; border-radius:50%;
-            background:rgba(212,175,55,.12); border:1px solid var(--border);
-            display:flex; align-items:center; justify-content:center;
-            margin:0 auto 1.2rem; font-size:1.4rem; color:var(--gold);
-        }
-        .book-modal h3 {
-            font-family:'Playfair Display',serif; font-size:1.4rem;
-            color:var(--fg); margin-bottom:.4rem;
-        }
-        .book-modal p { color:var(--muted); font-size:.88rem; margin-bottom:1.6rem; }
-        .book-phone {
-            font-family:'Playfair Display',serif; font-size:2rem; font-weight:700;
-            color:var(--gold); display:block; margin-bottom:1.4rem; letter-spacing:.02em;
-        }
-        .btn-call {
-            display:inline-flex; align-items:center; gap:.5rem;
-            background:var(--gold); color:#000; font-weight:700; font-size:.95rem;
-            padding:.85rem 2rem; border-radius:4px; text-decoration:none;
-            width:100%; justify-content:center; margin-bottom:.8rem;
-            transition:opacity .2s;
-        }
-        .btn-call:hover { opacity:.85; }
-        .book-close {
-            background:none; border:none; color:var(--muted); font-size:.85rem;
-            cursor:pointer; padding:.5rem 1rem; letter-spacing:.05em;
-        }
-        .book-close:hover { color:var(--fg); }
-        .google-cta {
-            display:flex; align-items:center; justify-content:center; gap:1rem;
-            padding:2.5rem 1.5rem 0; flex-wrap:wrap;
-        }
-        .btn-google-write {
-            display:inline-flex; align-items:center; gap:.6rem;
-            background:var(--gold); color:#000; font-weight:600; font-size:.88rem;
-            letter-spacing:.04em; padding:.8rem 1.6rem; border-radius:4px;
-            text-decoration:none; transition:opacity .2s;
-        }
-        .btn-google-write:hover { opacity:.85; }
-        .btn-google-read {
-            color:var(--gold); font-size:.88rem; letter-spacing:.04em;
-            text-decoration:none; border-bottom:1px solid rgba(212,175,55,.4);
-            padding-bottom:2px; transition:border-color .2s;
-        }
-        .btn-google-read:hover { border-color:var(--gold); }
-        .tcard {
-            background:var(--card); border:1px solid var(--border);
-            border-radius:8px; padding:2rem; width:340px; flex-shrink:0;
-            transition:border-color .3s;
-        }
-        .tcard:hover { border-color:rgba(212,175,55,.35); }
-        .t-stars { color:var(--gold); font-size:.8rem; letter-spacing:2px; margin-bottom:.9rem; }
-        .t-text { color:var(--muted); font-style:italic; line-height:1.82; margin-bottom:1.4rem; font-size:.93rem; }
-        .t-auth { display:flex; align-items:center; gap:.75rem; }
-        .t-av {
-            width:40px; height:40px; border-radius:50%;
-            background:rgba(212,175,55,.18);
-            display:flex; align-items:center; justify-content:center;
-            color:var(--gold); font-weight:700; font-size:.85rem; flex-shrink:0;
-        }
-        .t-name { font-weight:600; color:var(--fg); font-size:.88rem; }
-        .t-ok { font-size:.74rem; color:#4caf50; display:flex; align-items:center; gap:.3rem; }
-
-        /* ── HOURS ────────────────────────────────── */
-        .hours { padding: var(--sp) 2.5rem; background: var(--darker); }
-        .hours-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; }
-        .open-pill {
-            display:inline-flex; align-items:center; gap:.5rem;
-            background:rgba(76,175,80,.1); border:1px solid rgba(76,175,80,.3);
-            padding:.35rem .9rem; border-radius:50px;
-            font-size:.78rem; color:#4caf50; margin-bottom:1.8rem;
-        }
-        .open-dot { width:7px; height:7px; border-radius:50%; background:#4caf50; animation:blink 2s ease infinite; }
-        @keyframes blink { 0%,100%{opacity:1}50%{opacity:.4;transform:scale(1.4)} }
-        .hours-table { width:100%; border-collapse:collapse; }
-        .hours-table tr { border-bottom:1px solid var(--border); transition:background .2s; }
-        .hours-table tr:hover { background:var(--card); }
-        .hours-table td { padding:.95rem .5rem; font-size:.93rem; }
-        .hours-table td:first-child { color:var(--muted); width:50%; }
-        .hours-table td:last-child { color:var(--fg); font-weight:500; text-align:right; }
-        .hours-table .today-row td { color:var(--gold) !important; }
-        .hours-table .today-row td:first-child::before { content:'▸ '; }
-
-        /* ── CTA BANNER ───────────────────────────── */
-        .cta-strip { padding:6rem 2.5rem; background:var(--gold); text-align:center; position:relative; overflow:hidden; }
-        .cta-strip::before { display: none; }
-        .cta-strip h2 {
-            font-family:'Playfair Display',serif;
-            font-size:clamp(1.6rem,3vw,2.4rem); color:var(--darker);
-            margin-bottom:.8rem; position:relative;
-        }
-        .cta-strip p { color:rgba(8,8,8,.65); font-size:1.05rem; margin-bottom:2.2rem; position:relative; }
-        .btn-dark {
-            display:inline-block; background:var(--darker); color:var(--gold);
-            padding:.95rem 2.8rem; border-radius:4px; text-decoration:none;
-            font-weight:700; font-size:.82rem; letter-spacing:2px; text-transform:uppercase;
-            position:relative; transition:all .3s;
-        }
-        .btn-dark:hover { background:#1a1a1a; transform:translateY(-2px); }
-
-        /* ── CONTACT ──────────────────────────────── */
-        .contact { padding: var(--sp) 2.5rem; background:var(--dark); }
-        .contact-grid { display:grid; grid-template-columns:1fr 1.6fr; gap:4rem; align-items:start; }
-        .c-cards { display:flex; flex-direction:column; gap:.9rem; }
-        .c-card {
-            display:flex; align-items:flex-start; gap:1.2rem;
-            padding:1.4rem; background:var(--card);
-            border:1px solid var(--border); border-radius:8px;
-            transition:border-color .3s, transform .3s;
-        }
-        .c-card:hover { border-color:rgba(212,175,55,.4); transform:translateX(5px); }
-        .c-icon {
-            width:44px; height:44px; border-radius:50%;
-            background:rgba(212,175,55,.1);
-            display:flex; align-items:center; justify-content:center;
-            color:var(--gold); flex-shrink:0;
-        }
-        .c-label { font-size:.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:.3rem; }
-        .c-val { color:var(--fg); font-size:.97rem; font-weight:500; }
-        .c-val a { color:var(--fg); text-decoration:none; transition:color .3s; }
-        .c-val a:hover { color:var(--gold); }
-        .map-box {
-            border-radius:8px; overflow:hidden;
-            border:1px solid var(--border); min-height:460px; height:100%;
-        }
-        .map-box iframe { width:100%; height:100%; min-height:460px; border:none; filter:grayscale(80%) invert(90%) contrast(85%) brightness(.88); }
-
-        /* ── FOOTER ───────────────────────────────── */
-        footer { background:var(--darker); border-top:1px solid var(--border); }
-        .foot-main {
-            max-width:1300px; margin:0 auto; padding:4rem 2.5rem 3rem;
-            display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:4rem;
-        }
-        .foot-brand-name { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); display:block; }
-        .foot-brand-sub { font-size:.6rem; letter-spacing:4px; text-transform:uppercase; color:var(--muted); display:block; margin:.3rem 0 1.4rem; }
-        .foot-brand p { color:var(--muted); font-size:.9rem; line-height:1.8; max-width:270px; }
-        .foot-socials { display:flex; gap:1rem; margin-top:1.8rem; }
-        .soc {
-            width:52px; height:52px; border-radius:50%;
-            border:1px solid var(--border);
-            display:flex; align-items:center; justify-content:center;
-            color:var(--fg); text-decoration:none; font-size:1.25rem;
-            transition:all .3s;
-        }
-        .soc:hover { border-color:var(--gold); color:var(--gold); background:rgba(212,175,55,.07); transform:translateY(-3px); }
-        .foot-col h4 { font-size:.7rem; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:1.4rem; }
-        .foot-col ul { list-style:none; display:flex; flex-direction:column; gap:.7rem; }
-        .foot-col ul a { color:var(--muted); text-decoration:none; font-size:.9rem; transition:color .3s; }
-        .foot-col ul a:hover { color:var(--gold); }
-        .foot-col p { color:var(--muted); font-size:.9rem; line-height:1.85; }
-        .foot-bot {
-            border-top:1px solid var(--border); padding:1.4rem 2.5rem;
-            max-width:1300px; margin:0 auto;
-            display:flex; justify-content:space-between; align-items:center;
-        }
-        .foot-bot p { color:var(--muted); font-size:.78rem; }
-
-        /* ── REVEAL ───────────────────────────────── */
-        .rev     { opacity:0; transform:translateY(35px);  transition:opacity .8s ease, transform .8s ease; }
-        .rev-l   { opacity:0; transform:translateX(-35px); transition:opacity .8s ease, transform .8s ease; }
-        .rev-r   { opacity:0; transform:translateX(35px);  transition:opacity .8s ease, transform .8s ease; }
-        .d1 { transition-delay:.1s; } .d2 { transition-delay:.2s; }
-        .d3 { transition-delay:.3s; } .d4 { transition-delay:.4s; }
-        .shown { opacity:1 !important; transform:none !important; }
-
-        /* ── TABLET (769–1024px) ──────────────────── */
-        @media(max-width:1024px){
-            .stats-grid    { grid-template-columns:repeat(2,1fr); }
-            .about-grid    { grid-template-columns:1fr; gap:3rem; }
-            .hours-grid    { grid-template-columns:1fr; gap:3rem; }
-            .contact-grid  { grid-template-columns:1fr; }
-            .foot-main     { grid-template-columns:1fr 1fr; }
-            .about-badge   { display:none; }
-            .about-accent  { display:none; }
-        }
-
-        /* ── MOBILE (≤768px) ──────────────────────── */
-        @media(max-width:768px){
-            :root { --sp: 3.5rem; }
-
-            /* ─ NAV ─ */
-            nav {
-                background: rgba(8,8,8,.97) !important;
-                backdrop-filter: blur(20px);
-                border-bottom: 1px solid var(--border) !important;
-                padding: 1rem 0 !important;
-            }
-            .nav-in {
-                padding: 0 1.25rem;
-                justify-content: center;
-                position: relative;
-            }
-            .logo { position: static; }
-            .logo-top { font-size: 1.5rem; letter-spacing: 3px; }
-            .logo-bot { text-align: center; }
-            .nav-links, .nav-cta { display: none; }
-            .burger {
-                display: flex;
-                position: absolute;
-                right: 1.25rem; top: 50%;
-                transform: translateY(-50%);
-                margin: 0;
-            }
-
-            /* ─ HERO: fullbleed on mobile ─ */
-            .hero {
-                min-height: 100svh;
-                min-height: 100vh;
-                align-items: center;
-            }
-            .hero-bg { opacity: .3; }
-            .hero-grad {
-                background: linear-gradient(
-                    to bottom,
-                    rgba(8,8,8,.55) 0%,
-                    rgba(8,8,8,.35) 45%,
-                    rgba(8,8,8,.65) 100%
-                );
-            }
-            .hero-in {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                padding: 7rem 1.5rem 3rem;
-                gap: 0;
-            }
-            .hero-text {
-                display: flex; flex-direction: column; align-items: center;
-                width: 100%; max-width: 380px;
-            }
-            .hero-visual { display: none; }
-            .hero-foot { display: none; }
-            .eyebrow { justify-content: center; margin-bottom: 1.2rem; }
-            .hero h1 {
-                font-size: clamp(2.4rem, 11vw, 3.6rem);
-                margin-bottom: 1rem;
-                text-align: center;
-            }
-            .hero-sub {
-                font-size: .95rem; max-width: 100%;
-                text-align: center; margin-bottom: 1.6rem;
-            }
-            .hero-mob-meta { display: flex; }
-            .hero-btns { justify-content: center; gap: .75rem; flex-wrap: wrap; }
-
-            /* ─ STATS ─ */
-            .stats { padding: 2rem 1.25rem; }
-            .stats-grid { grid-template-columns: repeat(2,1fr); gap: 0; }
-            .stat { padding: 1.2rem .5rem; }
-            .stat-n { font-size: 2rem; }
-            .stat:not(:last-child)::after { display: none; }
-
-            /* ─ ABOUT ─ */
-            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .about-img { height: 240px; }
-            .about-badge, .about-accent { display: none; }
-            .about-feats { grid-template-columns: 1fr 1fr; gap: .75rem; }
-
-            /* ─ SECTION HEADERS: centrera allt på mobil ─ */
-            .sec-eye { justify-content: center; }
-            .sec-eye-line { display: none; }
-            h2.sec-title { text-align: center; }
-            .sec-header { flex-direction: column; align-items: center; gap: .75rem; }
-            .hours-text-side .sec-eye,
-            .rev-l .sec-eye,
-            .rev-r .sec-eye { justify-content: center; }
-            .hours-text-side h2.sec-title,
-            .rev-l h2.sec-title,
-            .rev-r h2.sec-title { text-align: center; }
-
-            /* ─ SERVICES ─ */
-            .service-row {
-                grid-template-columns: 28px 1fr auto;
-                gap: .75rem; padding: 1.1rem 0;
-            }
-            .svc-arrow { display: none; }
-            .svc-num { font-size: .85rem; }
-            .svc-info h3 { font-size: 1.05rem; }
-            .svc-info p { font-size: .8rem; }
-            .svc-price { font-size: 1rem; }
-
-            /* ─ GALLERY ─ */
-            .gallery-grid {
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: 180px 140px 140px;
-                gap: .5rem;
-            }
-            .gitem:nth-child(1) { grid-column:1/3; grid-row:1/2; }
-            .gitem:nth-child(2) { grid-column:1/2; grid-row:2/3; }
-            .gitem:nth-child(3) { grid-column:2/3; grid-row:2/3; }
-            .gitem:nth-child(4) { grid-column:1/2; grid-row:3/4; }
-            .gitem:nth-child(5) { grid-column:2/3; grid-row:3/4; }
-
-            /* ─ TESTIMONIALS ─ */
-            .marquee-head { padding: 0 1.25rem; margin-bottom: 2.5rem; }
-            .tcard { width: 270px; padding: 1.3rem; }
-            .t-text { font-size: .88rem; }
-
-            /* ─ HOURS ─ */
-            .hours-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .hours-table td { padding: .85rem .25rem; font-size: .88rem; }
-
-            /* ─ CTA ─ */
-            .cta-strip { padding: 3.5rem 1.5rem; }
-            .cta-strip h2 { font-size: clamp(1.4rem, 5vw, 1.9rem); }
-
-            /* ─ CONTACT ─ */
-            .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .map-box { min-height: 240px; }
-            .map-box iframe { min-height: 240px; }
-
-            /* ─ FOOTER ─ */
-            .foot-main { grid-template-columns: 1fr; gap: 2rem; padding: 2.5rem 1.25rem 2rem; }
-            .foot-bot { flex-direction: column; gap: .4rem; text-align: center; padding: 1.2rem 1.25rem; }
-            .foot-brand p { max-width: 100%; }
-
-            /* ─ FLOAT BTN ─ */
-            .float-btn { bottom: 1rem; right: 1rem; padding: .7rem 1.1rem; font-size: .78rem; }
-        }
-
-        /* ── SMALL PHONES (≤480px) ────────────────── */
-        @media(max-width:480px){
-            :root { --sp: 2.5rem; }
-            .nav-in { padding: 0 1rem; }
-            .burger { right: 1rem !important; }
-            .logo-top { font-size: 1.35rem; }
-            .hero h1 { font-size: clamp(2rem, 10vw, 3rem); }
-            .hero-btns { flex-direction: column; align-items: center; }
-            .btn-gold, .btn-ghost { width: 100%; justify-content: center; text-align: center; }
-            .about, .services, .gallery, .hours, .contact { padding: var(--sp) 1rem; }
-            .stats { padding: 1.5rem 1rem; }
-            .stat-n { font-size: 1.7rem; }
-            .about-feats { grid-template-columns: 1fr; }
-            .marquee-sec { padding: var(--sp) 0; }
-            .marquee-head { padding: 0 1rem; }
-            .tcard { width: 240px; padding: 1.1rem; }
-            .cta-strip { padding: 3rem 1rem; }
-            .gallery-grid { grid-template-rows: 160px 130px 130px; }
-        }
-
-        /* ── SCROLLBAR ────────────────────────────── */
-        ::-webkit-scrollbar{width:6px}
-        ::-webkit-scrollbar-track{background:var(--darker)}
-        ::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
-        ::-webkit-scrollbar-thumb:hover{background:var(--gold)}
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Salong Global Style — barberare i Göteborg. Klippning, fade, skäggvård och våtrakning på Wieselgrensgatan 7. Drop-in välkomna." />
+  <title>Salong Global Style – Barberare i Göteborg</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
-<!-- LOADER -->
-<div id="loader">
+  <!-- ═══════════ LOADER ═══════════ -->
+  <div id="loader">
     <i class="fas fa-cut loader-icon"></i>
-    <div class="loader-name">Global Style</div>
+    <div class="loader-name">Salong Global Style</div>
     <div class="loader-track"><div class="loader-fill"></div></div>
-</div>
+  </div>
 
-<!-- CURSOR -->
-<div class="c-dot" id="cDot"></div>
-<div class="c-ring" id="cRing"></div>
-
-<!-- PROGRESS -->
-<div id="prog"></div>
-
-<!-- FLOAT BOOK -->
-<a href="#kontakt" class="float-btn" id="floatBtn" data-booking="true">
-    <i class="fas fa-calendar-check"></i> Boka Tid
-</a>
-
-<!-- MOBILE MENU -->
-<div id="mobileNav">
-    <a href="#hem"      onclick="closeNav()">Hem</a>
-    <a href="#om-oss"   onclick="closeNav()">Om Oss</a>
-    <a href="#tjanster" onclick="closeNav()">Tjänster</a>
-    <a href="#galleri"  onclick="closeNav()">Galleri</a>
-    <a href="#kontakt"  onclick="closeNav()">Kontakt</a>
-</div>
-
-<!-- NAV -->
-<nav id="nav">
-    <div class="nav-in">
-        <a href="#hem" class="logo">
-            <span class="logo-top">Global Style</span>
-            <span class="logo-bot">Barberare · Göteborg</span>
+  <!-- ═══════════ NAVBAR ═══════════ -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#hem" class="nav-logo">SALONG GLOBAL STYLE</a>
+      <div class="nav-social" aria-label="Sociala medier">
+        <a href="https://www.instagram.com/salongglobalstyle" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
         </a>
-        <ul class="nav-links">
-            <li><a href="#hem">Hem</a></li>
-            <li><a href="#om-oss">Om Oss</a></li>
-            <li><a href="#tjanster">Tjänster</a></li>
-            <li><a href="#galleri">Galleri</a></li>
-            <li><a href="#kontakt">Kontakt</a></li>
-        </ul>
-        <a href="#kontakt" class="nav-cta" data-booking="true">Boka Tid</a>
-        <div class="burger" id="burger" onclick="toggleNav()">
-            <span></span><span></span><span></span>
-        </div>
+        <a href="https://www.tiktok.com/@salongglobal.style" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.69a8.16 8.16 0 0 0 4.77 1.52V6.78a4.85 4.85 0 0 1-1.84-.09Z"/></svg>
+        </a>
+      </div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hem">Hem</a></li>
+        <li><a href="#tjanster">Tjänster</a></li>
+        <li><a href="#om-oss">Om Oss</a></li>
+        <li><a href="#galleri">Galleri</a></li>
+        <li><a href="#recensioner">Recensioner</a></li>
+        <li><a href="#oppettider">Öppettider</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
+      </ul>
+      <a href="tel:+46312323210" class="btn-nav">Boka Nu</a>
+      <button class="hamburger" id="hamburger" aria-label="Meny">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-</nav>
+  </nav>
 
-<!-- ══════════════════════════════════════════════
-     HERO
-══════════════════════════════════════════════ -->
-<section class="hero" id="hem">
-    <!-- BYTA BILD (hero-bakgrund): ändra background-image i CSS-klassen .hero-bg, rekommenderat 1800×1000px -->
-    <div class="hero-bg"></div>
-    <div class="hero-grad"></div>
-    <div class="hero-big">GLOBAL<br>STYLE</div>
+  <!-- ═══════════ HERO ═══════════ -->
+  <section id="hem" class="hero">
+    <div class="hero-bg">
+      <img
+        src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600&q=85"
+        srcset="
+          https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=480&q=75  480w,
+          https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=800&q=80  800w,
+          https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=85 1200w,
+          https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600&q=85 1600w
+        "
+        sizes="100vw"
+        alt="Salong Global Style"
+        class="hero-img" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Välkommen till</p>
+      <h1 class="hero-title">Salong Global Style</h1>
+      <p class="hero-tagline">Precision &nbsp;·&nbsp; Stil &nbsp;·&nbsp; Karaktär</p>
+      <div class="hero-rating">
+        <span class="hero-stars">★★★★½</span>
+        <span class="hero-rating-text">4,6 &nbsp;·&nbsp; 109 Google Recensioner</span>
+      </div>
+      <div class="hero-cta">
+        <a href="tel:0312323210" class="btn-primary">Boka Din Tid</a>
+        <a href="#tjanster" class="btn-outline">Se Tjänster</a>
+      </div>
+    </div>
+    <a href="#tjanster" class="hero-scroll-hint" aria-label="Scrolla ned">
+      <span>Scrolla</span>
+      <div class="scroll-line"></div>
+    </a>
+  </section>
 
-    <div class="hero-in">
+  <!-- ═══════════ STATS ═══════════ -->
+  <section class="stats-bar">
+    <div class="stats-inner">
+      <div class="stat">
+        <strong>10+</strong>
+        <span>Års erfarenhet</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <strong>5000+</strong>
+        <span>Nöjda kunder</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <strong>4,6 ★</strong>
+        <span>109 Google-recensioner</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <strong>Göteborg</strong>
+        <span>Wieselgrensgatan 7</span>
+      </div>
+    </div>
+  </section>
 
-        <!-- LEFT: Text -->
-        <div class="hero-text">
-            <div class="eyebrow">
-                <span class="eyebrow-line"></span>
-                <span>Professionell Herrfrisering · Göteborg</span>
+  <!-- ═══════════ TJÄNSTER ═══════════ -->
+  <section id="tjanster" class="services">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Våra Tjänster</p>
+        <h2>Hitta Din Stil</h2>
+        <p class="section-sub">Klippning, skäggvård och rakkniv — vi tar oss tid att göra det rätt.</p>
+      </div>
+      <div class="services-grid">
+
+        <div class="service-card">
+          <div class="service-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3a2 2 0 0 1 2 2c0 1.1-.9 2-2 2a2 2 0 0 1-2-2c0-1.1.9-2 2-2z"/><path d="M6 7l6 5m6-9-12 10"/><path d="M18 3a2 2 0 0 1 2 2c0 1.1-.9 2-2 2a2 2 0 0 1-2-2c0-1.1.9-2 2-2z"/><path d="M13.5 13.5 18 21m-10.5-7.5L3 21"/></svg>
+          </div>
+          <h3>Herrklippning</h3>
+          <p>Klassiska klippningar, fades och moderna stilar.</p>
+          <div class="service-footer">
+            <div class="service-meta">
+              <span class="service-time">⏱ 30 min</span>
+              <span class="service-price">från 350 kr</span>
             </div>
-            <h1>
-                <span class="h-white">Precision.</span>
-                <span class="h-white">Stil.</span>
-                <span class="h-gold">Karaktär.</span>
-            </h1>
-            <p class="hero-sub">
-                Professionell herrfrisering och grooming i Göteborg — precision och stil, varje gång.
-            </p>
-            <!-- Visas bara på mobil -->
-            <div class="hero-mob-meta" id="heroMobMeta">
-                <span class="hero-mob-pill gold">★★★★☆ &nbsp;4.6 · 109 rec.</span>
-                <span class="hero-mob-pill dark" id="heroMobStatus">
-                    <span class="mob-dot" id="heroMobDot"></span>
-                    <span id="heroMobTxt">Nu öppet</span>
-                </span>
-            </div>
-            <div class="hero-btns">
-                <a href="#kontakt" class="btn-gold" data-booking="true">Boka Tid Nu</a>
-                <a href="#tjanster" class="btn-ghost">
-                    <span class="ghost-circle"><i class="fas fa-arrow-right"></i></span>
-                    <span>Våra Tjänster</span>
-                </a>
-            </div>
+          </div>
         </div>
 
-        <!-- RIGHT: Visual composition -->
-        <div class="hero-visual">
-            <!-- Offset gold border frame -->
-            <div class="hero-frame"></div>
-            <!-- Corner brackets -->
-            <span class="hcorner hcorner-tl"></span>
-            <span class="hcorner hcorner-tr"></span>
-            <span class="hcorner hcorner-bl"></span>
-            <span class="hcorner hcorner-br"></span>
-            <!-- Vertical accent line -->
-            <div class="hero-vline"></div>
-            <!-- BYTA BILD (hero-höger): rekommenderad storlek 700×900px, porträttformat -->
-            <div class="hero-img-wrap">
-                <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=700&h=900&fit=crop" alt="Salong Global Style">
+        <div class="service-card">
+          <div class="service-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a4 4 0 0 0-4 4v3"/><path d="M16 6a4 4 0 0 0-4-4"/><path d="M5 9h14l-1 7a5 5 0 0 1-5 4h-2a5 5 0 0 1-5-4z"/><path d="M9 14h.01M15 14h.01"/></svg>
+          </div>
+          <h3>Skäggvård</h3>
+          <p>Formning, trim och styling för en skarp look.</p>
+          <div class="service-footer">
+            <div class="service-meta">
+              <span class="service-time">⏱ 20 min</span>
+              <span class="service-price">från 250 kr</span>
             </div>
-            <!-- Scissors watermark -->
-            <div class="hero-sc-dec"><i class="fas fa-cut"></i></div>
-            <!-- Floating rating card -->
-            <div class="hero-rate">
-                <span class="rate-num">4.6</span>
-                <span class="rate-stars">★★★★☆</span>
-                <span class="rate-sub">109 recensioner</span>
-            </div>
-            <!-- Floating open/closed badge (updated by JS) -->
-            <div class="hero-status-badge" id="heroStatusBadge">
-                <div class="status-dot" id="heroStatusDot"></div>
-                <span class="status-txt" id="heroStatusTxt">Nu öppet</span>
-            </div>
+          </div>
         </div>
 
+        <div class="service-card">
+          <div class="service-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7l8 13 8-13"/><path d="M4 7l8-5 8 5"/><path d="M12 2v18"/></svg>
+          </div>
+          <h3>Traditionell Rakning</h3>
+          <p>Klassisk våtrakning med rakkniv och varm handduk.</p>
+          <div class="service-footer">
+            <div class="service-meta">
+              <span class="service-time">⏱ 25 min</span>
+              <span class="service-price">från 300 kr</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-card featured">
+          <div class="service-badge">Populär</div>
+          <div class="service-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l2.39 7.36H22l-6.18 4.49L18.18 21 12 16.51 5.82 21l2.36-7.15L2 9.36h7.61L12 2z"/></svg>
+          </div>
+          <h3>Komplett Paket</h3>
+          <p>Klippning, skäggvård och rakning — allt i ett besök.</p>
+          <div class="service-footer">
+            <div class="service-meta">
+              <span class="service-time">⏱ 60 min</span>
+              <span class="service-price">från 750 kr</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p class="services-note">Vi är en drop-in-salong — välkommen in under öppettiden. Vill du säkra en tid går det också bra att ringa. Priserna inkluderar moms.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ OM OSS ═══════════ -->
+  <section id="om-oss" class="about">
+    <div class="about-inner container">
+      <div class="about-img-wrap">
+        <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=700&q=80" alt="Salong Global Style – hantverk i fokus" loading="lazy" />
+        <div class="about-img-accent"></div>
+      </div>
+      <div class="about-text">
+        <p class="section-label">Om Oss</p>
+        <h2>Hantverk och Noggrannhet</h2>
+        <p><strong>Salong Global Style</strong> ligger på Wieselgrensgatan 7 i Göteborg. Vi har klippt göteborgare i över tio år och vet att en bra klippning handlar om att lyssna lika mycket som att klippa.</p>
+        <p>Här välkomnas du av barberare som tar sig tid att göra rätt — vare sig det är en klassisk klippning, en skarp fade eller välvårdat skägg. Vi tar i första hand emot drop-in, men det går också bra att ringa och boka tid i mån av plats.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ GALLERI ═══════════ -->
+  <section id="galleri" class="gallery">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Galleri</p>
+        <h2>Vårt Arbete</h2>
+      </div>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1599351431613-18ef1fdd27e1?w=600&q=80" alt="Precision Fade" loading="lazy" />
+        <div class="gallery-overlay"><span>Precision Fade</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvmVPd89c9m3q69pa3f-N9Tb840BsazcS5R7bWeIUhOeGmemhV8zzNgZEMV5WpNRFQy7XjjeNfirAWlLI7AuRXxtx9a6btP4WNQpmENEHiqmf_yfOu8VR_fewioyig6HEy_7u7y=w680-h510-k-no" alt="Salong Global Style" loading="lazy" />
+        <div class="gallery-overlay"><span>Salong Global Style</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1621607512022-6aecc4fed814?w=600&q=80" alt="Klassisk stil" loading="lazy" />
+        <div class="gallery-overlay"><span>Klassisk Stil</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAE1t9HVy14WzBU4kXzO8FP1FiH7MN_uL0rDMyljBuFbCKu9OKduON0S75wHd9srnvW72vWrvJlLmoPgm1XQcHU_stZb_B1h3B6kCCQweC73RPYGGqMJh2NtzfANHfzXmqTol2ZRObm1DyPX=w680-h510-k-no" alt="Salong Global Style — inne i salongen" loading="lazy" />
+        <div class="gallery-overlay"><span>Hos Oss</span></div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1656921350129-61ad3ff901f3?w=600&q=80" alt="Professionella verktyg" loading="lazy" />
+        <div class="gallery-overlay"><span>Professionella Verktyg</span></div>
+      </div>
+    </div>
+    <div class="gallery-dots" aria-hidden="true">
+      <span class="gallery-dot active"></span>
+      <span class="gallery-dot"></span>
+      <span class="gallery-dot"></span>
+      <span class="gallery-dot"></span>
+      <span class="gallery-dot"></span>
+    </div>
+  </section>
+
+  <!-- ═══════════ RECENSIONER ═══════════ -->
+  <section id="recensioner" class="reviews">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-label">Recensioner</p>
+        <h2>Vad Våra Kunder Säger</h2>
+        <div class="reviews-score">
+          <span class="score-number">4,6</span>
+          <div class="score-right">
+            <div class="score-stars">★★★★½</div>
+            <p>Baserat på 109 Google Recensioner</p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="hero-foot">
-        <div class="hero-loc">
-            <i class="fas fa-map-marker-alt"></i>
-            <span>Wieselgrensgatan 7, 417 17 Göteborg</span>
-        </div>
-        <div class="scroll-cue">
-            <div class="scroll-line"></div>
-            <span>Scrolla</span>
-        </div>
+    <!-- Marquee-rullning — full bredd utanför container -->
+    <div class="marquee-outer">
+      <div class="marquee-track" id="marqueeRow1"></div>
     </div>
-</section>
 
-<!-- ══════════════════════════════════════════════
-     STATS
-══════════════════════════════════════════════ -->
-<section class="stats">
-    <div class="stats-grid">
-        <div class="stat rev d1">
-            <div class="stat-n"><span class="counter" data-target="10">0</span><span class="stat-s">+</span></div>
-            <div class="stat-l">Års Erfarenhet</div>
-        </div>
-        <div class="stat rev d2">
-            <div class="stat-n"><span class="counter" data-target="109">0</span><span class="stat-s">+</span></div>
-            <div class="stat-l">Recensioner</div>
-        </div>
-        <div class="stat rev d3">
-            <div class="stat-n"><span class="counter" data-target="5000">0</span><span class="stat-s">+</span></div>
-            <div class="stat-l">Nöjda Kunder</div>
-        </div>
-        <div class="stat rev d4">
-            <div class="stat-n"><span class="counter" data-target="4" data-decimal=".6">0</span><span class="stat-s">.6 ★</span></div>
-            <div class="stat-l">Genomsnittsbetyg</div>
-        </div>
+    <div class="container">
+      <div class="reviews-action">
+        <p>Har du klippt dig hos oss? Lämna gärna en recension så hjälper du andra hitta hit.</p>
+        <a href="https://www.google.com/maps/search/Salong+Global+Style+Wieselgrensgatan+7+G%C3%B6teborg" target="_blank" rel="noopener" class="btn-google-review">
+          <svg width="20" height="20" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
+            <path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/>
+            <path fill="#FBBC05" d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.59.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/>
+            <path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z"/>
+          </svg>
+          Skriv en recension på Google
+        </a>
+      </div>
     </div>
-</section>
+  </section>
 
-<!-- ══════════════════════════════════════════════
-     ABOUT
-══════════════════════════════════════════════ -->
-<section class="about" id="om-oss">
+  <!-- ═══════════ ÖPPETTIDER ═══════════ -->
+  <section id="oppettider" class="hours-section">
     <div class="wrap">
-        <div class="about-grid">
-            <div class="about-vis rev-l">
-                <!-- BYTA BILD: ersätt src nedan med din egen bild (rekommenderad storlek: 800×1000px) -->
-                <img src="https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=800&h=1000&fit=crop" alt="Salong interiör" class="about-img">
-                <div class="about-badge">
-                    <span class="about-badge-n">10+</span>
-                    <span class="about-badge-l">Års Erfarenhet</span>
-                </div>
-                <!-- BYTA BILD: liten accentbild nere till höger (rekommenderad storlek: 400×400px) -->
-                <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&h=400&fit=crop" alt="Barberare i arbete" class="about-accent">
-            </div>
-            <div class="rev-r">
-                <div class="sec-eye">
-                    <span class="sec-eye-line"></span>
-                    <span>Vår Historia</span>
-                </div>
-                <h2 class="sec-title" style="margin-bottom:1.8rem;">Vi skapar mer än<br>bara en <em>frisyr</em></h2>
-                <p class="about-body">
-                    Välkommen till Salong Global Style på Wieselgrensgatan 7 i Göteborg. Hos oss kombinerar vi hantverkstradition med moderna tekniker för precision och stil — oavsett om det gäller klippning, fade eller skäggvård.
-                </p>
-                <div class="about-feats">
-                    <div class="feat"><i class="fas fa-check"></i><span>Precision Fades</span></div>
-                    <div class="feat"><i class="fas fa-check"></i><span>Klassiska Klippningar</span></div>
-                    <div class="feat"><i class="fas fa-check"></i><span>Professionell Skäggvård</span></div>
-                    <div class="feat"><i class="fas fa-check"></i><span>Drop-in Välkommen</span></div>
-                    <div class="feat"><i class="fas fa-check"></i><span>Erfarna Barberare</span></div>
-                    <div class="feat"><i class="fas fa-check"></i><span>Premium Produkter</span></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+      <div class="hours-grid">
 
-<!-- ══════════════════════════════════════════════
-     SERVICES
-══════════════════════════════════════════════ -->
-<section class="services" id="tjanster">
-    <div class="wrap">
-        <div class="sec-header rev">
-            <div>
-                <div class="sec-eye">
-                    <span class="sec-eye-line"></span>
-                    <span>Vad vi erbjuder</span>
-                </div>
-                <h2 class="sec-title">Våra <em>Tjänster</em></h2>
-            </div>
-        </div>
-        <div class="service-row rev d1">
-            <span class="svc-num">01</span>
-            <div class="svc-info">
-                <h3>Herrklippning</h3>
-                <p>Fades, klassiska klippningar och moderna stilar</p>
-            </div>
-            <span class="svc-price">från 350 kr</span>
-            <div class="svc-arrow"><i class="fas fa-cut"></i></div>
-        </div>
-        <div class="service-row rev d2">
-            <span class="svc-num">02</span>
-            <div class="svc-info">
-                <h3>Skäggvård</h3>
-                <p>Formning, trimning och vård för en välvårdad look</p>
-            </div>
-            <span class="svc-price">från 250 kr</span>
-            <div class="svc-arrow"><i class="fas fa-user-tie"></i></div>
-        </div>
-        <div class="service-row rev d3">
-            <span class="svc-num">03</span>
-            <div class="svc-info">
-                <h3>Traditionell Rakning</h3>
-                <p>Klassisk våtrakning med kniv för en slät finish</p>
-            </div>
-            <span class="svc-price">från 300 kr</span>
-            <div class="svc-arrow"><i class="fas fa-fire"></i></div>
-        </div>
-        <div class="service-row rev d4">
-            <span class="svc-num">04</span>
-            <div class="svc-info">
-                <h3>Komplett Paket</h3>
-                <p>Klippning + skäggvård + rakning</p>
-            </div>
-            <span class="svc-price">från 750 kr</span>
-            <div class="svc-arrow"><i class="fas fa-star"></i></div>
-        </div>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════════
-     GALLERY
-══════════════════════════════════════════════ -->
-<section class="gallery" id="galleri">
-    <div class="wrap">
-        <div class="rev">
-            <div class="sec-eye">
-                <span class="sec-eye-line"></span>
-                <span>Vårt arbete</span>
-            </div>
-            <h2 class="sec-title">Galleri</h2>
-        </div>
-    </div>
-    <div class="wrap">
-        <div class="gallery-grid rev">
-            <!-- BYTA BILD 1 (stor, vänster): rekommenderad storlek 800×1100px -->
-            <div class="gitem">
-                <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800&h=1100&fit=crop" alt="Precision Fade">
-                <div class="g-over"><span class="g-label">Precision Fade</span></div>
-            </div>
-            <!-- BYTA BILD 2 (övre mitten): rekommenderad storlek 600×400px -->
-            <div class="gitem">
-                <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=400&fit=crop" alt="Skäggvård">
-                <div class="g-over"><span class="g-label">Skäggvård</span></div>
-            </div>
-            <!-- BYTA BILD 3 (övre höger): rekommenderad storlek 600×400px -->
-            <div class="gitem">
-                <img src="https://images.unsplash.com/photo-1599351431613-18ef1fdd27e1?w=600&h=400&fit=crop" alt="Klassisk Stil">
-                <div class="g-over"><span class="g-label">Klassisk Stil</span></div>
-            </div>
-            <!-- BYTA BILD 4 (nedre mitten): rekommenderad storlek 700×400px -->
-            <div class="gitem">
-                <img src="https://images.unsplash.com/photo-1547546754-1b30b48a2f63?w=700&h=400&fit=crop" alt="Modern Look">
-                <div class="g-over"><span class="g-label">Modern Look</span></div>
-            </div>
-            <!-- BYTA BILD 5 (nedre höger): rekommenderad storlek 600×400px -->
-            <div class="gitem">
-                <img src="https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?w=600&h=400&fit=crop" alt="Rakning">
-                <div class="g-over"><span class="g-label">Traditionell Rakning</span></div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ══════════════════════════════════════════════
-     TESTIMONIALS MARQUEE
-══════════════════════════════════════════════ -->
-<section class="marquee-sec">
-    <div class="marquee-head rev">
-        <div class="rating-pill">
-            <span class="rating-stars">★★★★★</span>
-            <span>UTMÄRKT · Baserat på 109 recensioner på Google</span>
-        </div>
-        <div class="sec-eye" style="justify-content:center;">
+        <div class="rev-l shown">
+          <div class="sec-eye">
             <span class="sec-eye-line"></span>
-            <span>Vad kunderna säger</span>
-            <span class="sec-eye-line"></span>
+            <span>Öppettider</span>
+          </div>
+          <h2 class="sec-title" style="margin-bottom:1.6rem;">Våra<br><em>öppettider</em></h2>
+          <div class="open-pill" id="statusPill">
+            <div class="open-dot" id="statusDot"></div>
+            <span id="statusTxt">Nu öppet</span>
+          </div>
+          <p class="about-body">
+            Vi är en drop-in-salong — kom förbi när det passar dig. Vill du säkra en tid går det också bra att ringa, i mån av plats.
+          </p>
         </div>
-        <h2 class="sec-title" style="text-align:center;">Kundrecensioner</h2>
-    </div>
-    <div class="marquee-wrap">
-        <div class="marquee-track">
-            <!-- CARDS (duplicated for seamless loop) -->
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Grym klippning varje gång! Kom utan bokning och de tog emot mig direkt. Barberaren lyssnade noga och resultatet var perfekt."</p><div class="t-auth"><div class="t-av">EJ</div><div><div class="t-name">Erik J.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Alltid nöjd när jag lämnar Global Style. Bra service, trevlig personal och priset är helt okej. Bästa barbershopen på Hisingen!"</p><div class="t-auth"><div class="t-av">AH</div><div><div class="t-name">Ahmed H.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Min fasta barberare sedan två år. Skarpa linjer, bra stämning och alltid proffsigt bemötande. Inget annat håller måttet."</p><div class="t-auth"><div class="t-av">TN</div><div><div class="t-name">Tobias N.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Bästa stället i hela Göteborg utan tvekan. Har testat många ställen men ingen kommer i närheten. Skärpan på faden är oslagbar!"</p><div class="t-auth"><div class="t-av">OA</div><div><div class="t-name">Omar A.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Tog med min brorson hit — han var helt nöjd och ville inte gå hem. Jättetrevlig personal, snabbt och prisvärt. Kommer tillbaka!"</p><div class="t-auth"><div class="t-av">CB</div><div><div class="t-name">Christoffer B.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Fantastisk fade och skäggklippning. Personalen är vänlig och verkliga proffs. Hittat min stambarberare i Göteborg!"</p><div class="t-auth"><div class="t-av">YM</div><div><div class="t-name">Yusuf M.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Har gått hit länge nu och de levererar alltid. Trevlig miljö, duktiga händer och man lämnar alltid med ett leende."</p><div class="t-auth"><div class="t-av">MH</div><div><div class="t-name">Mattias H.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Väldigt nöjd med resultatet! Förklarade precis vad jag ville ha och de förstod direkt. Rekommenderar till alla mina kompisar."</p><div class="t-auth"><div class="t-av">HR</div><div><div class="t-name">Hamid R.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <!-- DUPE -->
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Grym klippning varje gång! Kom utan bokning och de tog emot mig direkt. Barberaren lyssnade noga och resultatet var perfekt."</p><div class="t-auth"><div class="t-av">EJ</div><div><div class="t-name">Erik J.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Alltid nöjd när jag lämnar Global Style. Bra service, trevlig personal och priset är helt okej. Bästa barbershopen på Hisingen!"</p><div class="t-auth"><div class="t-av">AH</div><div><div class="t-name">Ahmed H.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Min fasta barberare sedan två år. Skarpa linjer, bra stämning och alltid proffsigt bemötande. Inget annat håller måttet."</p><div class="t-auth"><div class="t-av">TN</div><div><div class="t-name">Tobias N.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Bästa stället i hela Göteborg utan tvekan. Har testat många ställen men ingen kommer i närheten. Skärpan på faden är oslagbar!"</p><div class="t-auth"><div class="t-av">OA</div><div><div class="t-name">Omar A.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Tog med min brorson hit — han var helt nöjd och ville inte gå hem. Jättetrevlig personal, snabbt och prisvärt. Kommer tillbaka!"</p><div class="t-auth"><div class="t-av">CB</div><div><div class="t-name">Christoffer B.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Fantastisk fade och skäggklippning. Personalen är vänlig och verkliga proffs. Hittat min stambarberare i Göteborg!"</p><div class="t-auth"><div class="t-av">YM</div><div><div class="t-name">Yusuf M.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Har gått hit länge nu och de levererar alltid. Trevlig miljö, duktiga händer och man lämnar alltid med ett leende."</p><div class="t-auth"><div class="t-av">MH</div><div><div class="t-name">Mattias H.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
-            <div class="tcard"><div class="t-stars">★★★★★</div><p class="t-text">"Väldigt nöjd med resultatet! Förklarade precis vad jag ville ha och de förstod direkt. Rekommenderar till alla mina kompisar."</p><div class="t-auth"><div class="t-av">HR</div><div><div class="t-name">Hamid R.</div><div class="t-ok"><i class="fas fa-check-circle"></i> Google-recension</div></div></div></div>
+
+        <div class="rev-r shown">
+          <table class="hours-tbl" id="hoursTable">
+            <tbody>
+              <tr data-day="1"><td>Måndag</td><td>10:00 — 19:00</td></tr>
+              <tr data-day="2"><td>Tisdag</td><td>10:00 — 19:00</td></tr>
+              <tr data-day="3"><td>Onsdag</td><td>10:00 — 19:00</td></tr>
+              <tr data-day="4"><td>Torsdag</td><td>10:00 — 19:00</td></tr>
+              <tr data-day="5"><td>Fredag</td><td>10:00 — 19:00</td></tr>
+              <tr data-day="6"><td>Lördag</td><td>10:00 — 19:00</td></tr>
+              <tr data-day="0"><td>Söndag</td><td>10:00 — 16:00</td></tr>
+            </tbody>
+          </table>
         </div>
-    </div>
-    <!-- Google review CTA -->
-    <div class="google-cta">
-        <a href="https://www.google.com/maps/search/Salong+Global+Style+Wieselgrensgatan+7+G%C3%B6teborg" target="_blank" rel="noopener" class="btn-google-write">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" style="flex-shrink:0"><path fill="#fff" d="M12 11h8.5c.1.5.1 1 .1 1.5 0 4.7-3.2 8-8.1 8-4.7 0-8.5-3.8-8.5-8.5S7.8 3.5 12.5 3.5c2.3 0 4.2.8 5.7 2.2l-2.3 2.3C15 7.1 13.8 6.5 12.5 6.5c-2.8 0-5 2.3-5 5s2.2 5 5 5c2.5 0 4.2-1.4 4.7-3.5H12v-2z"/></svg>
-            Skriv recension på Google
-        </a>
-        <a href="https://www.google.com/maps/search/Salong+Global+Style+Wieselgrensgatan+7+G%C3%B6teborg" target="_blank" rel="noopener" class="btn-google-read">
-            Se fler recensioner &nbsp;→
-        </a>
-    </div>
-</section>
 
-<!-- ══════════════════════════════════════════════
-     HOURS
-══════════════════════════════════════════════ -->
-<section class="hours">
-    <div class="wrap">
-        <div class="hours-grid">
-            <div class="rev-l">
-                <div class="sec-eye">
-                    <span class="sec-eye-line"></span>
-                    <span>Besök oss</span>
-                </div>
-                <h2 class="sec-title" style="margin-bottom:1.6rem;">Öppet<br><em>varje dag</em></h2>
-                <div class="open-pill" id="statusPill">
-                    <div class="open-dot" id="statusDot"></div>
-                    <span id="statusTxt">Nu öppet</span>
-                </div>
-                <p class="about-body">
-                    Drop-in välkommen när vi har plats — boka gärna i förväg för garanterad tid.
-                </p>
-                <a href="#kontakt" class="btn-gold" data-booking="true">Boka Din Tid</a>
-            </div>
-            <div class="rev-r">
-                <table class="hours-table" id="hoursTable">
-                    <tr data-day="1"><td>Måndag</td><td>10:00 — 19:00</td></tr>
-                    <tr data-day="2"><td>Tisdag</td><td>10:00 — 19:00</td></tr>
-                    <tr data-day="3"><td>Onsdag</td><td>10:00 — 19:00</td></tr>
-                    <tr data-day="4"><td>Torsdag</td><td>10:00 — 19:00</td></tr>
-                    <tr data-day="5"><td>Fredag</td><td>10:00 — 19:00</td></tr>
-                    <tr data-day="6"><td>Lördag</td><td>10:00 — 19:00</td></tr>
-                    <tr data-day="0"><td>Söndag</td><td>10:00 — 16:00</td></tr>
-                </table>
-            </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ KARTA & KONTAKT ═══════════ -->
+  <section id="kontakt" class="location">
+    <div class="location-inner container">
+
+      <div class="location-info">
+        <p class="section-label">Kontakta Oss</p>
+        <h2>Hitta Till Oss</h2>
+
+        <div class="info-block">
+          <div class="info-icon">📍</div>
+          <div>
+            <h4>Adress</h4>
+            <p>Wieselgrensgatan 7<br />417 17 Göteborg</p>
+          </div>
         </div>
-    </div>
-</section>
 
-<!-- ══════════════════════════════════════════════
-     CTA STRIP
-══════════════════════════════════════════════ -->
-<section class="cta-strip">
-    <h2>Redo för en ny look?</h2>
-    <p>Boka din tid idag och upplev Göteborg's bästa barbershop</p>
-    <a href="#kontakt" class="btn-dark" data-booking="true">Boka Nu &nbsp;<i class="fas fa-arrow-right"></i></a>
-</section>
-
-<!-- ══════════════════════════════════════════════
-     CONTACT
-══════════════════════════════════════════════ -->
-<section class="contact" id="kontakt">
-    <div class="wrap">
-        <div style="margin-bottom:3rem;" class="rev">
-            <div class="sec-eye">
-                <span class="sec-eye-line"></span>
-                <span>Kontakta oss</span>
-            </div>
-            <h2 class="sec-title">Hitta <em>Hit</em></h2>
+        <div class="info-block">
+          <div class="info-icon">📞</div>
+          <div>
+            <h4>Telefon</h4>
+            <a href="tel:0312323210" class="contact-phone-link">031-23 23 10</a>
+          </div>
         </div>
-        <div class="contact-grid">
-            <div class="c-cards rev-l">
-                <div class="c-card">
-                    <div class="c-icon"><i class="fas fa-map-marker-alt"></i></div>
-                    <div>
-                        <div class="c-label">Adress</div>
-                        <div class="c-val">Wieselgrensgatan 7, 417 17 Göteborg</div>
-                    </div>
-                </div>
-                <div class="c-card">
-                    <div class="c-icon"><i class="fas fa-phone"></i></div>
-                    <div>
-                        <div class="c-label">Telefon</div>
-                        <div class="c-val"><a href="tel:031232310">031-23 23 10</a></div>
-                    </div>
-                </div>
-                <div class="c-card">
-                    <div class="c-icon"><i class="fas fa-walking"></i></div>
-                    <div>
-                        <div class="c-label">Drop-in</div>
-                        <div class="c-val">Välkommen — vi tar emot drop-in kunder när vi har plats</div>
-                    </div>
-                </div>
-            </div>
-            <div class="map-box rev-r">
-                <iframe
-                    src="https://maps.google.com/maps?q=Wieselgrensgatan+7,+417+17+G%C3%B6teborg,+Sverige&output=embed&z=16&hl=sv"
-                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
-                </iframe>
-            </div>
+
+        <div class="info-block">
+          <div class="info-icon">🚶</div>
+          <div>
+            <h4>Drop-in</h4>
+            <p>Välkommen in under hela öppettiden — vi tar emot drop-in i första hand.</p>
+          </div>
         </div>
-    </div>
-</section>
+      </div>
 
-<!-- ══════════════════════════════════════════════
-     FOOTER
-══════════════════════════════════════════════ -->
-<footer>
-    <div class="foot-main">
-        <div class="foot-brand">
-            <span class="foot-brand-name">Global Style</span>
-            <span class="foot-brand-sub">Barberare · Göteborg</span>
-            <p>Premium herrfrisering och grooming i hjärtat av Göteborg. Vi levererar precision, stil och karaktär — varje gång du besöker oss.</p>
-            <div class="foot-socials">
-                <!-- LÄNK: byt ut # mot din Instagram-länk -->
-                <a href="#" class="soc" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                <!-- LÄNK: byt ut # mot din TikTok-länk -->
-                <a href="#" class="soc" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
-            </div>
+      <div class="location-map">
+        <iframe
+          title="Karta till Salong Global Style"
+          src="https://maps.google.com/maps?q=Wieselgrensgatan+7,+417+17+G%C3%B6teborg,+Sweden&output=embed&hl=sv&z=16"
+          width="100%" height="100%"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    <div class="footer-inner container">
+      <div class="footer-brand">
+        <span class="footer-logo">SALONG GLOBAL STYLE</span>
+        <p>Barberare på Hisingen — klippning, skägg och rakkniv.</p>
+        <div class="footer-social">
+          <a href="tel:0312323210" aria-label="Ring oss">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.86a16 16 0 0 0 5.55 5.55l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21 16z"/></svg>
+          </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=Salong+Global+Style+Wieselgrensgatan+7+G%C3%B6teborg" target="_blank" rel="noopener" aria-label="Google Maps">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </a>
+          <a href="https://www.instagram.com/salongglobalstyle" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+          <a href="https://www.tiktok.com/@salongglobal.style" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+          </a>
         </div>
+      </div>
+      <div class="footer-book">
+        <h4>Boka Tid</h4>
+        <p>Ring oss direkt så bokar vi in dig.</p>
+        <a href="tel:0312323210" class="btn-primary">031-23 23 10</a>
+      </div>
     </div>
-    <div class="foot-bot">
-        <p>&copy; 2026 Salong Global Style. Alla rättigheter förbehållna.</p>
-        <p>Wieselgrensgatan 7 · Göteborg</p>
+    <div class="footer-bottom">
+      <p>© 2026 Salong Global Style. Alla rättigheter förbehållna. · Utvecklad av <a href="https://havaljalal.se" target="_blank" rel="noopener" class="footer-dev-link">havaljalal.se</a></p>
     </div>
-</footer>
+  </footer>
 
-<!-- ══════════════════════════════════════════════
-     SCRIPT
-══════════════════════════════════════════════ -->
-<!-- BOOKING MODAL -->
-<div class="book-overlay" id="bookOverlay">
-    <div class="book-modal">
-        <div class="book-modal-icon"><i class="fas fa-phone"></i></div>
-        <h3>Boka din tid</h3>
-        <p>Ring oss direkt så bokar vi in dig</p>
-        <!-- BYTA NUMMER: ändra telefonnumret nedan till det riktiga -->
-        <a class="book-phone" href="tel:031232310">031-23 23 10</a>
-        <a href="tel:031232310" class="btn-call">
-            <i class="fas fa-phone"></i> Ring nu
-        </a>
-        <button class="book-close" onclick="closeBooking()">Stäng</button>
+  <!-- ═══════════ FLYTANDE SOCIAL (desktop) ═══════════ -->
+  <div class="floating-social" aria-label="Sociala medier">
+    <a href="https://www.instagram.com/salongglobalstyle" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+    </a>
+    <a href="https://www.tiktok.com/@salongglobal.style" target="_blank" rel="noopener" aria-label="TikTok">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.69a8.16 8.16 0 0 0 4.77 1.52V6.78a4.85 4.85 0 0 1-1.84-.09Z"/></svg>
+    </a>
+  </div>
+
+  <!-- ═══════════ FLYTANDE RING/BOKA-KNAPP ═══════════ -->
+  <div class="fab-container" id="fabContainer">
+    <div class="fab-popup" id="fabPopup" aria-hidden="true">
+      <p class="fab-popup-label">Ring oss</p>
+      <a href="tel:0312323210" class="fab-phone-link" id="fabPhoneLink">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.86a16 16 0 0 0 5.55 5.55l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21 16z"/>
+        </svg>
+        031-23 23 10
+      </a>
+      <div class="fab-popup-divider"></div>
+      <a href="https://www.google.com/maps/search/?api=1&query=Salong+Global+Style+Wieselgrensgatan+7+G%C3%B6teborg" target="_blank" rel="noopener" class="fab-book-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/>
+        </svg>
+        Hitta hit
+      </a>
     </div>
-</div>
+    <button class="fab-btn" id="fabBtn" aria-label="Ring eller boka tid">
+      <span class="fab-icon fab-icon-phone">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.62 3.38 2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.86a16 16 0 0 0 5.55 5.55l.95-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21 16z"/>
+        </svg>
+      </span>
+      <span class="fab-icon fab-icon-close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </span>
+      <span class="fab-label">Ring &amp; Boka</span>
+    </button>
+  </div>
 
-<script>
-    /* LOADER */
-    document.body.style.overflow = 'hidden';
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            document.getElementById('loader').classList.add('gone');
-            document.body.style.overflow = '';
-        }, 1900);
-    });
-
-    /* CURSOR */
-    const dot = document.getElementById('cDot');
-    const ring = document.getElementById('cRing');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-
-    document.addEventListener('mousemove', e => {
-        mx = e.clientX; my = e.clientY;
-        dot.style.left = mx + 'px';
-        dot.style.top  = my + 'px';
-    });
-    (function animRing() {
-        rx += (mx - rx) * .13;
-        ry += (my - ry) * .13;
-        ring.style.left = rx + 'px';
-        ring.style.top  = ry + 'px';
-        requestAnimationFrame(animRing);
-    })();
-    document.querySelectorAll('a,button,.service-row,.gitem,.tcard').forEach(el => {
-        el.addEventListener('mouseenter', () => ring.classList.add('big'));
-        el.addEventListener('mouseleave', () => ring.classList.remove('big'));
-    });
-
-    /* SCROLL */
-    window.addEventListener('scroll', () => {
-        const st = scrollY;
-        const dh = document.body.scrollHeight - innerHeight;
-        document.getElementById('prog').style.width = (st / dh * 100) + '%';
-        document.getElementById('nav').classList.toggle('solid', st > 60);
-        document.getElementById('floatBtn').classList.toggle('on', st > 350);
-    });
-
-    /* BOOKING MODAL */
-    function openBooking() {
-        document.getElementById('bookOverlay').classList.add('show');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeBooking() {
-        document.getElementById('bookOverlay').classList.remove('show');
-        document.body.style.overflow = '';
-    }
-    document.getElementById('bookOverlay').addEventListener('click', function(e) {
-        if (e.target === this) closeBooking();
-    });
-    document.querySelectorAll('[data-booking]').forEach(btn => {
-        btn.addEventListener('click', e => { e.preventDefault(); openBooking(); });
-    });
-
-    /* SMOOTH SCROLL */
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-        if (a.dataset.booking) return;
-        a.addEventListener('click', e => {
-            const tgt = document.querySelector(a.getAttribute('href'));
-            if (tgt) {
-                e.preventDefault();
-                window.scrollTo({ top: tgt.getBoundingClientRect().top + scrollY - 75, behavior: 'smooth' });
-            }
-        });
-    });
-
-    /* MOBILE NAV */
-    function toggleNav() {
-        document.getElementById('mobileNav').classList.toggle('open');
-        document.getElementById('burger').classList.toggle('x');
-    }
-    function closeNav() {
-        document.getElementById('mobileNav').classList.remove('open');
-        document.getElementById('burger').classList.remove('x');
-    }
-
-    /* REVEAL */
-    const ro = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('shown'); });
-    }, { threshold: .1, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.rev,.rev-l,.rev-r').forEach(el => ro.observe(el));
-
-    /* COUNTERS */
-    const co = new IntersectionObserver(entries => {
-        entries.forEach(e => {
-            if (!e.isIntersecting) return;
-            const el = e.target;
-            const target = +el.dataset.target;
-            const dur = 2000, step = target / (dur / 16);
-            let n = 0;
-            const t = setInterval(() => {
-                n = Math.min(n + step, target);
-                el.textContent = Math.floor(n).toLocaleString('sv-SE');
-                if (n >= target) clearInterval(t);
-            }, 16);
-            co.unobserve(el);
-        });
-    }, { threshold: .5 });
-    document.querySelectorAll('.counter').forEach(el => co.observe(el));
-
-    /* TODAY HIGHLIGHT */
-    const todayIdx = new Date().getDay();
-    document.querySelectorAll('#hoursTable tr').forEach(row => {
-        if (+row.dataset.day === todayIdx) row.classList.add('today-row');
-    });
-
-    /* OPEN / CLOSED STATUS */
-    const h = new Date().getHours();
-    const isSun = new Date().getDay() === 0;
-    const closeH = isSun ? 16 : 19;
-    const isOpen = h >= 10 && h < closeH;
-    if (!isOpen) {
-        const closed = { bg:'rgba(244,67,54,.1)', border:'rgba(244,67,54,.3)', color:'#F44336', txt:'Nu stängt' };
-        // Hours section pill
-        const pill = document.getElementById('statusPill');
-        const dotEl = document.getElementById('statusDot');
-        if (pill) { pill.style.background = closed.bg; pill.style.borderColor = closed.border; pill.style.color = closed.color; }
-        if (dotEl) dotEl.style.background = closed.color;
-        const sTxt = document.getElementById('statusTxt');
-        if (sTxt) sTxt.textContent = closed.txt;
-        // Hero badge
-        const heroBadge = document.getElementById('heroStatusBadge');
-        const heroDot   = document.getElementById('heroStatusDot');
-        const heroTxt   = document.getElementById('heroStatusTxt');
-        if (heroBadge) { heroBadge.style.borderColor = closed.border; }
-        if (heroDot)   heroDot.style.background = closed.color;
-        if (heroTxt)   heroTxt.textContent = closed.txt;
-        // Mobile hero pill
-        const mobStatus = document.getElementById('heroMobStatus');
-        const mobDot    = document.getElementById('heroMobDot');
-        const mobTxt    = document.getElementById('heroMobTxt');
-        if (mobStatus) { mobStatus.style.borderColor = 'rgba(244,67,54,.4)'; mobStatus.style.color = '#F44336'; }
-        if (mobDot)    mobDot.style.background = '#F44336';
-        if (mobTxt)    mobTxt.textContent = 'Nu stängt';
-    }
-</script>
+  <script src="js/main.js"></script>
 </body>
 </html>
