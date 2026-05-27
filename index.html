@@ -4,19 +4,74 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Salong Global Style — barberare i Göteborg. Klippning, fade, skäggvård och våtrakning på Wieselgrensgatan 7. Drop-in välkomna." />
+  <meta name="theme-color" content="#0a0a0a" />
   <title>Salong Global Style – Barberare i Göteborg</title>
+
+  <!-- Open Graph (Facebook, WhatsApp, iMessage, LinkedIn) -->
+  <meta property="og:type" content="business.business" />
+  <meta property="og:title" content="Salong Global Style – Barberare i Göteborg" />
+  <meta property="og:description" content="Klippning, fade, skäggvård och våtrakning på Wieselgrensgatan 7. Drop-in välkomna." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=85" />
+  <meta property="og:locale" content="sv_SE" />
+  <meta property="og:site_name" content="Salong Global Style" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Salong Global Style – Barberare i Göteborg" />
+  <meta name="twitter:description" content="Klippning, fade, skäggvård och våtrakning på Wieselgrensgatan 7. Drop-in välkomna." />
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=85" />
+
+  <!-- Strukturerad data — LocalBusiness/HairSalon -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HairSalon",
+    "name": "Salong Global Style",
+    "description": "Barberare i Göteborg — klippning, fade, skäggvård och våtrakning.",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Wieselgrensgatan 7",
+      "postalCode": "417 17",
+      "addressLocality": "Göteborg",
+      "addressCountry": "SE"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 57.7229411,
+      "longitude": 11.9349179
+    },
+    "telephone": "+46-31-23-23-10",
+    "url": "https://salongglobalstyle.vercel.app/",
+    "image": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=85",
+    "priceRange": "250–750 SEK",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.6",
+      "reviewCount": "109"
+    },
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], "opens": "10:00", "closes": "19:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "10:00", "closes": "16:00" }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/salongglobalstyle",
+      "https://www.tiktok.com/@salongglobal.style"
+    ]
+  }
+  </script>
+
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
 
+  <a href="#hem" class="skip-link">Hoppa till innehåll</a>
+
   <!-- ═══════════ LOADER ═══════════ -->
   <div id="loader">
-    <i class="fas fa-cut loader-icon"></i>
+    <svg class="loader-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M9.64 7.64c.23-.5.36-1.05.36-1.64 0-2.21-1.79-4-4-4S2 3.79 2 6s1.79 4 4 4c.59 0 1.14-.13 1.64-.36L10 12l-2.36 2.36C7.14 14.13 6.59 14 6 14c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4c0-.59-.13-1.14-.36-1.64L12 14l7 7h3v-1L9.64 7.64zM6 8c-1.1 0-2-.89-2-2s.9-2 2-2 2 .89 2 2-.9 2-2 2zm0 12c-1.1 0-2-.89-2-2s.9-2 2-2 2 .89 2 2-.9 2-2 2zm6-7.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5zM19 3l-6 6 2 2 7-7V3z"/>
+    </svg>
     <div class="loader-name">Salong Global Style</div>
     <div class="loader-track"><div class="loader-fill"></div></div>
   </div>
@@ -42,7 +97,7 @@
         <li><a href="#oppettider">Öppettider</a></li>
         <li><a href="#kontakt">Kontakt</a></li>
       </ul>
-      <a href="tel:+46312323210" class="btn-nav">Boka Nu</a>
+      <a href="tel:0312323210" class="btn-nav">Boka Nu</a>
       <button class="hamburger" id="hamburger" aria-label="Meny">
         <span></span><span></span><span></span>
       </button>
@@ -62,7 +117,8 @@
         "
         sizes="100vw"
         alt="Salong Global Style"
-        class="hero-img" />
+        class="hero-img"
+        fetchpriority="high" />
       <div class="hero-overlay"></div>
     </div>
     <div class="hero-content">
@@ -123,40 +179,11 @@
           <div class="service-icon-wrap">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3a2 2 0 0 1 2 2c0 1.1-.9 2-2 2a2 2 0 0 1-2-2c0-1.1.9-2 2-2z"/><path d="M6 7l6 5m6-9-12 10"/><path d="M18 3a2 2 0 0 1 2 2c0 1.1-.9 2-2 2a2 2 0 0 1-2-2c0-1.1.9-2 2-2z"/><path d="M13.5 13.5 18 21m-10.5-7.5L3 21"/></svg>
           </div>
-          <h3>Herrklippning</h3>
+          <h3>Hårklippning</h3>
           <p>Klassiska klippningar, fades och moderna stilar.</p>
           <div class="service-footer">
             <div class="service-meta">
-              <span class="service-time">⏱ 30 min</span>
-              <span class="service-price">från 350 kr</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="service-card">
-          <div class="service-icon-wrap">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a4 4 0 0 0-4 4v3"/><path d="M16 6a4 4 0 0 0-4-4"/><path d="M5 9h14l-1 7a5 5 0 0 1-5 4h-2a5 5 0 0 1-5-4z"/><path d="M9 14h.01M15 14h.01"/></svg>
-          </div>
-          <h3>Skäggvård</h3>
-          <p>Formning, trim och styling för en skarp look.</p>
-          <div class="service-footer">
-            <div class="service-meta">
-              <span class="service-time">⏱ 20 min</span>
-              <span class="service-price">från 250 kr</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="service-card">
-          <div class="service-icon-wrap">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7l8 13 8-13"/><path d="M4 7l8-5 8 5"/><path d="M12 2v18"/></svg>
-          </div>
-          <h3>Traditionell Rakning</h3>
-          <p>Klassisk våtrakning med rakkniv och varm handduk.</p>
-          <div class="service-footer">
-            <div class="service-meta">
-              <span class="service-time">⏱ 25 min</span>
-              <span class="service-price">från 300 kr</span>
+              <span class="service-price">200 kr</span>
             </div>
           </div>
         </div>
@@ -166,12 +193,63 @@
           <div class="service-icon-wrap">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l2.39 7.36H22l-6.18 4.49L18.18 21 12 16.51 5.82 21l2.36-7.15L2 9.36h7.61L12 2z"/></svg>
           </div>
-          <h3>Komplett Paket</h3>
-          <p>Klippning, skäggvård och rakning — allt i ett besök.</p>
+          <h3>Hårklippning + Skäggtrimning</h3>
+          <p>Den populäraste behandlingen — klippning och skäggtrim i ett besök.</p>
           <div class="service-footer">
             <div class="service-meta">
-              <span class="service-time">⏱ 60 min</span>
-              <span class="service-price">från 750 kr</span>
+              <span class="service-price">300 kr</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r=".7" fill="currentColor"/><circle cx="15" cy="10" r=".7" fill="currentColor"/><path d="M9 15c.8 .8 1.8 1.3 3 1.3s2.2 -.5 3 -1.3"/></svg>
+          </div>
+          <h3>Barn under 6 år</h3>
+          <p>Lugnt tempo och snäll behandling för de minsta.</p>
+          <div class="service-footer">
+            <div class="service-meta">
+              <span class="service-price">160 kr</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="7" r="3"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+          </div>
+          <h3>Barn 6–10 år</h3>
+          <p>Klassisk klippning anpassad för de yngre.</p>
+          <div class="service-footer">
+            <div class="service-meta">
+              <span class="service-price">180 kr</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0 -7.78 0L12 5.67l-1.06 -1.06a5.5 5.5 0 0 0 -7.78 7.78l1.06 1.06L12 21.23l7.78 -7.78 1.06 -1.06a5.5 5.5 0 0 0 0 -7.78z"/></svg>
+          </div>
+          <h3>Pensionär</h3>
+          <p>Samma omsorg, vänligare pris.</p>
+          <div class="service-footer">
+            <div class="service-meta">
+              <span class="service-price">160 kr</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M19 14l.6 1.8L21.4 16.4l-1.8 .6L19 18.8l-.6 -1.8L16.6 16.4l1.8 -.6L19 14z"/><path d="M5 16l.6 1.8L7.4 18.4l-1.8 .6L5 20.8l-.6 -1.8L2.6 18.4l1.8 -.6L5 16z"/></svg>
+          </div>
+          <h3>Vaxning, Trådning &amp; Hårtvättning</h3>
+          <p>Tillägg som finishar besöket — välj efter behov.</p>
+          <div class="service-footer">
+            <div class="service-meta">
+              <span class="service-price">50 kr</span>
             </div>
           </div>
         </div>
@@ -211,7 +289,7 @@
         <div class="gallery-overlay"><span>Precision Fade</span></div>
       </div>
       <div class="gallery-item">
-        <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvmVPd89c9m3q69pa3f-N9Tb840BsazcS5R7bWeIUhOeGmemhV8zzNgZEMV5WpNRFQy7XjjeNfirAWlLI7AuRXxtx9a6btP4WNQpmENEHiqmf_yfOu8VR_fewioyig6HEy_7u7y=w680-h510-k-no" alt="Salong Global Style" loading="lazy" />
+        <img src="images/gallery-salong-1.jpg" alt="Salong Global Style" loading="lazy" />
         <div class="gallery-overlay"><span>Salong Global Style</span></div>
       </div>
       <div class="gallery-item">
@@ -219,7 +297,7 @@
         <div class="gallery-overlay"><span>Klassisk Stil</span></div>
       </div>
       <div class="gallery-item">
-        <img src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAE1t9HVy14WzBU4kXzO8FP1FiH7MN_uL0rDMyljBuFbCKu9OKduON0S75wHd9srnvW72vWrvJlLmoPgm1XQcHU_stZb_B1h3B6kCCQweC73RPYGGqMJh2NtzfANHfzXmqTol2ZRObm1DyPX=w680-h510-k-no" alt="Salong Global Style — inne i salongen" loading="lazy" />
+        <img src="images/gallery-salong-2.jpg" alt="Salong Global Style — inne i salongen" loading="lazy" />
         <div class="gallery-overlay"><span>Hos Oss</span></div>
       </div>
       <div class="gallery-item">
@@ -344,16 +422,18 @@
         </div>
       </div>
 
-      <div class="location-map">
-        <iframe
-          title="Karta till Salong Global Style"
-          src="https://maps.google.com/maps?q=Wieselgrensgatan+7,+417+17+G%C3%B6teborg,+Sweden&output=embed&hl=sv&z=16"
-          width="100%" height="100%"
-          style="border:0;"
-          allowfullscreen=""
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
+      <div class="location-map" id="locationMap">
+        <img src="images/map.png" alt="Karta till Salong Global Style — Wieselgrensgatan 7" class="location-map-bg" loading="lazy" />
+        <div class="location-map-consent" id="mapConsent">
+          <div class="location-map-banner">
+            <h4>Karta från Google</h4>
+            <p>Google sätter cookies för att visa en interaktiv karta. Vill du ladda den?</p>
+            <div class="location-map-buttons">
+              <button type="button" class="btn-primary" id="mapAllow">Visa karta</button>
+              <a class="btn-outline" href="https://www.google.com/maps/search/?api=1&query=Wieselgrensgatan+7,+417+17+G%C3%B6teborg" target="_blank" rel="noopener">Öppna i Google Maps istället</a>
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -387,7 +467,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Salong Global Style. Alla rättigheter förbehållna. · Utvecklad av <a href="https://havaljalal.se" target="_blank" rel="noopener" class="footer-dev-link">havaljalal.se</a></p>
+      <p>© <span id="footerYear">2026</span> Salong Global Style. Alla rättigheter förbehållna. · Utvecklad av <a href="https://havaljalal.se" target="_blank" rel="noopener" class="footer-dev-link">havaljalal.se</a></p>
     </div>
   </footer>
 

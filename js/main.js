@@ -14,23 +14,27 @@ window.addEventListener('load', () => {
 
 // ── Navbar scroll effect ──
 const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 50);
-}, { passive: true });
+if (navbar) {
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  }, { passive: true });
+}
 
 // ── Mobile hamburger ──
 const hamburger = document.getElementById('hamburger');
 const navLinks  = document.getElementById('navLinks');
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('open');
-  navLinks.classList.toggle('open');
-});
-navLinks.querySelectorAll('a').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('open');
-    navLinks.classList.remove('open');
+if (hamburger && navLinks) {
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    navLinks.classList.toggle('open');
   });
-});
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      navLinks.classList.remove('open');
+    });
+  });
+}
 
 // ── Scroll-reveal (IntersectionObserver) ──
 const revealTargets = document.querySelectorAll(
@@ -117,27 +121,29 @@ sections.forEach(s => sectionObserver.observe(s));
 const fabBtn    = document.getElementById('fabBtn');
 const fabPopup  = document.getElementById('fabPopup');
 
-fabBtn.addEventListener('click', () => {
-  const isOpen = fabPopup.classList.toggle('open');
-  fabBtn.classList.toggle('open', isOpen);
-  fabPopup.setAttribute('aria-hidden', String(!isOpen));
-});
+if (fabBtn && fabPopup) {
+  fabBtn.addEventListener('click', () => {
+    const isOpen = fabPopup.classList.toggle('open');
+    fabBtn.classList.toggle('open', isOpen);
+    fabPopup.setAttribute('aria-hidden', String(!isOpen));
+  });
 
-// Stäng popup vid klick utanför
-document.addEventListener('click', (e) => {
-  if (!fabBtn.contains(e.target) && !fabPopup.contains(e.target)) {
+  // Stäng popup vid klick utanför
+  document.addEventListener('click', (e) => {
+    if (!fabBtn.contains(e.target) && !fabPopup.contains(e.target)) {
+      fabPopup.classList.remove('open');
+      fabBtn.classList.remove('open');
+      fabPopup.setAttribute('aria-hidden', 'true');
+    }
+  });
+
+  // Stäng popup vid scroll (valfritt — bra UX på mobil)
+  window.addEventListener('scroll', () => {
     fabPopup.classList.remove('open');
     fabBtn.classList.remove('open');
     fabPopup.setAttribute('aria-hidden', 'true');
-  }
-});
-
-// Stäng popup vid scroll (valfritt — bra UX på mobil)
-window.addEventListener('scroll', () => {
-  fabPopup.classList.remove('open');
-  fabBtn.classList.remove('open');
-  fabPopup.setAttribute('aria-hidden', 'true');
-}, { passive: true });
+  }, { passive: true });
+}
 
 // ── Gallery swipe dots ──
 const galleryGrid = document.querySelector('.gallery-grid');
@@ -154,11 +160,46 @@ if (galleryGrid && galleryDots.length) {
   }, { passive: true });
 }
 
-// ── Öppet/Stängt-pill + today-row ──
+// ── Karta — cookie consent + lazy load ──
+function loadGoogleMap() {
+  const mapEl = document.getElementById('locationMap');
+  if (!mapEl) return;
+  const iframe = document.createElement('iframe');
+  iframe.title = 'Karta till Salong Global Style';
+  iframe.src = 'https://maps.google.com/maps?q=Wieselgrensgatan+7,+417+17+G%C3%B6teborg,+Sweden&output=embed&hl=sv&z=16';
+  iframe.loading = 'lazy';
+  iframe.allowFullscreen = true;
+  iframe.referrerPolicy = 'no-referrer-when-downgrade';
+  mapEl.innerHTML = '';
+  mapEl.appendChild(iframe);
+}
+
+const mapAllowBtn = document.getElementById('mapAllow');
+if (mapAllowBtn) {
+  if (localStorage.getItem('mapConsent') === 'true') {
+    loadGoogleMap();
+  } else {
+    mapAllowBtn.addEventListener('click', () => {
+      localStorage.setItem('mapConsent', 'true');
+      loadGoogleMap();
+    });
+  }
+}
+
+// ── Öppet/Stängt-pill + today-row (Stockholm-tidszon) ──
 function updateHoursUI() {
-  const now  = new Date();
-  const day  = now.getDay();
-  const time = now.getHours() * 60 + now.getMinutes();
+  // Hämta dag och tid i Stockholm-tidszon, oavsett besökarens lokala tidszon
+  const fmt = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Europe/Stockholm',
+    weekday: 'short',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false
+  });
+  const parts = Object.fromEntries(fmt.formatToParts(new Date()).map(p => [p.type, p.value]));
+  const weekdayMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+  const day = weekdayMap[parts.weekday];
+  const time = parseInt(parts.hour, 10) * 60 + parseInt(parts.minute, 10);
 
   // Mån–Lör 10–19, Sön 10–16
   let isOpen = false;
@@ -178,3 +219,7 @@ function updateHoursUI() {
   });
 }
 updateHoursUI();
+
+// ── Dynamiskt år i footer ──
+const yearEl = document.getElementById('footerYear');
+if (yearEl) yearEl.textContent = new Date().getFullYear();

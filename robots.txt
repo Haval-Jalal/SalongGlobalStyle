@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://salongglobalstyle.vercel.app/sitemap.xml
