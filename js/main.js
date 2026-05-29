@@ -223,3 +223,15 @@ updateHoursUI();
 // ── Dynamiskt år i footer ──
 const yearEl = document.getElementById('footerYear');
 if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+// ── "Boka"-CTA: ring på touch, scrolla till kontakt på dator ──
+if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  document.querySelectorAll('a.book-cta').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = document.getElementById('kontakt');
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+}
