@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://salongglobalstyle.vercel.app/sitemap.xml
+Sitemap: https://salongglobalstyle.se/sitemap.xml
