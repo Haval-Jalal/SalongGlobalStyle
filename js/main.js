@@ -201,10 +201,10 @@ function updateHoursUI() {
   const day = weekdayMap[parts.weekday];
   const time = parseInt(parts.hour, 10) * 60 + parseInt(parts.minute, 10);
 
-  // Mån–Lör 10–19, Sön 10–16
+  // Mån–Lör 10–19, Sön 11–16
   let isOpen = false;
   if (day >= 1 && day <= 6) isOpen = time >= 600 && time < 1140;
-  if (day === 0)            isOpen = time >= 600 && time < 960;
+  if (day === 0)            isOpen = time >= 660 && time < 960;
 
   const pill = document.getElementById('statusPill');
   const txt  = document.getElementById('statusTxt');
