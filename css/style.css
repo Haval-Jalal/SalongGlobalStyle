@@ -967,7 +967,7 @@ ul { list-style: none; }
   .nav-links.open { display: flex; }
   .nav-links li a { display: block; padding: 12px 0; font-size: .9rem; border-bottom: 1px solid var(--border); }
   .nav-links li:last-child a { border-bottom: none; }
-  .hamburger { display: flex; margin-left: auto; margin-right: 0; padding: 6px; }
+  .hamburger { display: flex; margin-left: 0; margin-right: 0; padding: 6px; }
   .btn-nav { display: none; }
 
   .hero-title { font-size: clamp(2.4rem, 10vw, 4rem); line-height: 1.05; }
@@ -1748,7 +1748,7 @@ ul { list-style: none; }
 .nav-social a svg { width: 16px; height: 16px; }
 
 @media (max-width: 768px) {
-  .nav-social { display: flex; gap: 8px; }
+  .nav-social { display: flex; gap: 8px; margin-left: auto; }
   .nav-social a { width: 30px; height: 30px; }
   .nav-social a svg { width: 14px; height: 14px; }
 }
