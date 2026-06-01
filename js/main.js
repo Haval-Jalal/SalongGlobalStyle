@@ -209,7 +209,7 @@ function updateHoursUI() {
   const pill = document.getElementById('statusPill');
   const txt  = document.getElementById('statusTxt');
   if (pill && txt) {
-    txt.textContent = isOpen ? 'Nu öppet' : 'Stängt nu';
+    txt.textContent = isOpen ? 'Öppet nu' : 'Stängt nu';
     pill.classList.toggle('closed-pill', !isOpen);
   }
 
